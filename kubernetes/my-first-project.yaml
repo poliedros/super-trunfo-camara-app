@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: politicians-app
+  labels:
+    app: politicians-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: politicians-app
+  template:
+    metadata:
+      labels:
+        app: politicians-app
+    spec:
+      containers:
+        - name: politicians
+          image: carloszan/politicians:1.0.0
+          ports:
+            - containerPort: 80
+              name: web
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              port: web
+              path: /
