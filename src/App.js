@@ -289,11 +289,9 @@ function App() {
         .then((response) => {
           const $ = cheerio.load(response.data);
 
+          if(response.headers['x-final-url'].includes("Prop_lista")) {
+
           const urlElems = $('table');
-          console.log("AQUI2");
-          console.log(response.headers['x-final-url']);
-          //console.log(response);
-          //console.log(response.headers);
 
           const array = urlElems.text().split("\n");
 
@@ -303,6 +301,7 @@ function App() {
               console.log(array[i].trim());
             }
           }
+
           setReports(arrayReport);
 
           for (let i = 0; i < urlElems.length; i++) {
@@ -310,6 +309,22 @@ function App() {
             if (urlSpan) {
               const urlText = $(urlSpan).text();
             }
+          }
+
+          } else {
+            const urlElems = $('h3');
+            const array = urlElems.text().split("\n");
+            array.forEach(element => {
+              element.replace("Inteiro teor", "");
+              element.trim();
+            });
+            for (let i = 0; i < array.length; i++) {
+              if (i == 1){
+                array[i] = array[i].replace("Inteiro teor", "");
+                arrayReport.push(array[i].trim());
+              }
+            }
+            setReports(arrayReport);
           }
       })
     }
