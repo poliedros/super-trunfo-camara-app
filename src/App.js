@@ -160,7 +160,7 @@ function App() {
           <Card.Body>
             <Card.Title>{ politician.nome }</Card.Title>
             <Card.Text>
-              { index } Some quick example text to build on the card title and make up the bulk
+              Some quick example text to build on the card title and make up the bulk
               of the card's content.
             </Card.Text>
           </Card.Body>
@@ -392,7 +392,7 @@ function App() {
 
   return (
     <div>
-      <Card border="primary" style={{ width: '18rem' }} onClick={() => setModalShow(true)}>
+      {/* <Card border="primary" style={{ width: '18rem' }} onClick={() => setModalShow(true)}>
         <Card.Header>Header</Card.Header>
         <Card.Body>
           <Card.Title>Primary Card Title</Card.Title>
@@ -401,7 +401,7 @@ function App() {
             of the card's content.
           </Card.Text>
         </Card.Body>
-      </Card>
+      </Card> */}
 
       { loadXMLDoc() }
 
