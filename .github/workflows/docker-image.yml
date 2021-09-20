@@ -15,4 +15,4 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --plataform linux/arm64 --tag carloszan/politicians:$(date +%s)
+      run: docker build . --file Dockerfile --platform linux/arm64 --tag carloszan/politicians:$(date +%s)
