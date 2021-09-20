@@ -16,5 +16,9 @@ jobs:
     steps:
     - uses: uraimo/run-on-arch-action@v2.1.1
     - uses: actions/checkout@v2
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --platform linux/arm64 --tag carloszan/politicians:$(date +%s)
+      name: Build the Docker image
+      with:
+        arch: aarch64
+        distro: ubuntu18.04
+        
+        run: docker build . --file Dockerfile --platform linux/arm64 --tag carloszan/politicians:$(date +%s)
