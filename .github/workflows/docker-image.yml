@@ -1,24 +1,19 @@
-name: Docker Image CI
-
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+on: [push, pull_request]
 
 jobs:
-
-  build:
-
-    runs-on: ubuntu-latest
-
+  aarch64_job:
+    # The host should always be Linux
+    runs-on: ubuntu-18.04
+    name: Build on ubuntu-18.04 armv7
     steps:
-    - uses: uraimo/run-on-arch-action@v2.1.1
-    - uses: actions/checkout@v2
-      name: Build the Docker image
-      with:
-        arch: aarch64
-        distro: ubuntu18.04
-        
-        run: docker build . --file Dockerfile --platform linux/arm64 --tag carloszan/politicians:$(date +%s)
+      - uses: actions/checkout@v2.1.0
+      - uses: uraimo/run-on-arch-action@v2.0.5
+        name: Build image
+        id: runcmd
+        with:
+          arch: aarch64
+          distro: ubuntu-latest
+
+          # Set an output parameter `uname` for use in subsequent steps
+          run: |
+            docker build . --file Dockerfile --platform linux/arm64 --tag carloszan/politicians:$(date +%s)
