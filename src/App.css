@@ -36,18 +36,3 @@
     transform: rotate(360deg);
   }
 }
-
-.modal-backdrop {
-  background-color: green;
-}
-
-.cards-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-evenly;
-  flex-direction: row;
-}
-
-.btImage {
-  width: fit-content;
-}
