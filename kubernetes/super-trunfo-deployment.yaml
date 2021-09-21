@@ -1,22 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: politicians-app
+  name: super-trunfo
   labels:
-    app: politicians-app
+    app: super-trunfo
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: politicians-app
+      app: super-trunfo
   template:
     metadata:
       labels:
-        app: politicians-app
+        app: super-trunfo
     spec:
+      terminationGracePeriodSeconds: 30
       containers:
-        - name: politicians
-          image: carloszan/politicians:1.0.0
+        - name: super-trunfo
+          image: carloszan/super-trunfo-camara-app:latest
           ports:
             - containerPort: 80
               name: web
@@ -25,3 +26,4 @@ spec:
             httpGet:
               port: web
               path: /
+          imagePullPolicy: "Always"
