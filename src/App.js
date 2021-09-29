@@ -284,8 +284,8 @@ function App() {
   function setAltReports(id) {
     let arrayReport = [];
     //React.useEffect(() => {
-    const getReports = async => {
-      axios.get('https://totalcors.herokuapp.com/https://www.camara.leg.br/internet/sileg/Prop_lista.asp?Relator=0&ideCadastroProp=' + id + '&Limite=N&tipoProp=3')
+    const getReports = async () => {
+      await axios.get('https://totalcors.herokuapp.com/https://www.camara.leg.br/internet/sileg/Prop_lista.asp?Relator=0&ideCadastroProp=' + id + '&Limite=N&tipoProp=3')
         .then((response) => {
           const $ = cheerio.load(response.data);
 
