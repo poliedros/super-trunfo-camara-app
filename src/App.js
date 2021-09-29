@@ -122,7 +122,7 @@ function App() {
 
   React.useEffect(() => {
     const getPoliticians = async () => {
-      axios.get('https://totalcors.herokuapp.com/https://dadosabertos.camara.leg.br/api/v2/deputados?ordem=ASC&ordenarPor=nome')
+      await axios.get('https://totalcors.herokuapp.com/https://dadosabertos.camara.leg.br/api/v2/deputados?ordem=ASC&ordenarPor=nome')
         .then((response) => {
         const deputados = response.data.dados;
         //console.log(deputados);
@@ -333,8 +333,8 @@ function App() {
   }
 
   function setAltLegislatures(id) {
-    const getLegislatures = async => {
-      axios.get('https://totalcors.herokuapp.com/https://www.camara.leg.br/deputados/' + id + '/biografia')
+    const getLegislatures = async () => {
+      await axios.get('https://totalcors.herokuapp.com/https://www.camara.leg.br/deputados/' + id + '/biografia')
         .then((response) => {
           const lastLegislature = 60;
 
