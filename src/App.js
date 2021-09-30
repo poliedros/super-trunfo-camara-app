@@ -122,7 +122,7 @@ function App() {
 
   React.useEffect(() => {
     const getPoliticians = async () => {
-      axios.get('https://totalcors.herokuapp.com/https://dadosabertos.camara.leg.br/api/v2/deputados?ordem=ASC&ordenarPor=nome')
+      await axios.get('https://totalcors.herokuapp.com/https://dadosabertos.camara.leg.br/api/v2/deputados?ordem=ASC&ordenarPor=nome')
         .then((response) => {
         const deputados = response.data.dados;
         //console.log(deputados);
@@ -284,8 +284,8 @@ function App() {
   function setAltReports(id) {
     let arrayReport = [];
     //React.useEffect(() => {
-    const getReports = async => {
-      axios.get('https://totalcors.herokuapp.com/https://www.camara.leg.br/internet/sileg/Prop_lista.asp?Relator=0&ideCadastroProp=' + id + '&Limite=N&tipoProp=3')
+    const getReports = async () => {
+      await axios.get('https://totalcors.herokuapp.com/https://www.camara.leg.br/internet/sileg/Prop_lista.asp?Relator=0&ideCadastroProp=' + id + '&Limite=N&tipoProp=3')
         .then((response) => {
           const $ = cheerio.load(response.data);
 
@@ -333,8 +333,8 @@ function App() {
   }
 
   function setAltLegislatures(id) {
-    const getLegislatures = async => {
-      axios.get('https://totalcors.herokuapp.com/https://www.camara.leg.br/deputados/' + id + '/biografia')
+    const getLegislatures = async () => {
+      await axios.get('https://totalcors.herokuapp.com/https://www.camara.leg.br/deputados/' + id + '/biografia')
         .then((response) => {
           const lastLegislature = 60;
 
