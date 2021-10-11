@@ -4,26 +4,27 @@ import Modal from "react-bootstrap/Modal";
 import Image from "react-bootstrap/Image";
 import ListGroup from "react-bootstrap/ListGroup";
 
-interface PoliticoCard {
+/*interface PoliticianCard {
   show: false;
   onHide: () => {};
   urlPolitician: string;
   urlParty: string;
-  partido: Partido;
-  politico: Politico[];
-  propostas: Proposta[];
-  legislaturas: Legislaturas[];
-  relatorios: Relatorio[];
+  party: Partido;
+  politician: Politicos[];
+  proposed: Propostas[];
+  legislatures: Legislaturas[];
+  reported: Relatadas[];
+}*/
+
+interface PoliticianCardProps {
+  //politician: PoliticianCard;
 }
 
-interface PoliticoCardProps {
-  politico: PoliticoCard;
-}
-
-const PoliticoCard = ({ politico }: PoliticoCardProps) => {
+const PoliticianCard = (/*{ politician }: PoliticianCardProps*/) => {
   return (
-    <Modal
-      {...politico}
+    <div>
+    {/*<Modal
+      {...politician}
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       centered
@@ -61,20 +62,20 @@ const PoliticoCard = ({ politico }: PoliticoCardProps) => {
         <p></p>
         <h4>Dados Políticos:</h4>
         <h5>Legislaturas:</h5>
-        <p>{props.legislatures.map((legislature) => legislature + " ")} </p>
+        <p>{props.legislatures.map((legislatures) => legislatures + " ")} </p>
         <h5>Despesas:</h5>
         <h5>Discurso:</h5>
         <h5>Votações:</h5>
         <h5>Presença:</h5>
         <h5>Proposições aprovadas:</h5>
         <ListGroup variant="flush">
-          {props.propositions.map((proposition) => (
-            <ListGroup.Item>{proposition}</ListGroup.Item>
+          {props.propositions.map((proposed) => (
+            <ListGroup.Item>{proposed}</ListGroup.Item>
           ))}
         </ListGroup>
         <h5>Proposições relatadas:</h5>
         <ListGroup variant="flush">
-          {props.reports.map((report) => (
+          {props.reports.map((reported) => (
             <ListGroup.Item>{report}</ListGroup.Item>
           ))}
         </ListGroup>
@@ -82,8 +83,9 @@ const PoliticoCard = ({ politico }: PoliticoCardProps) => {
       <Modal.Footer>
         <Button onClick={props.onHide}>Fechar</Button>
       </Modal.Footer>
-    </Modal>
+    </Modal>*/}
+    </div>
   );
 };
 
-export default PoliticoCard;
+export default PoliticianCard;

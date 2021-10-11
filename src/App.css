@@ -7,8 +7,75 @@
   flex-wrap: wrap;
   justify-content: space-evenly;
   flex-direction: row;
+  background-color: white;
+
+  margin: 15vh 0vw 7vh 0vw;
+  border-radius: 2rem;
+  padding: 5vh 1vw 5vh 1vw;
 }
 
 .btImage {
   width: fit-content;
+}
+
+/*my css*/
+
+.mainBg {
+  background-color: black;
+}
+
+.cardPadding {
+  padding-top: 50px !important;
+}
+
+.cardContainerCenter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px;
+}
+
+.cardImage {
+  width: 250px;
+  margin-bottom: -30px;
+  z-index: 1;
+}
+
+.cardTextLeft {
+  text-align: left;
+}
+
+.cardTextRight {
+  float: right;
+}
+
+.wc {
+  color: white !important;
+}
+
+.middle {
+  display: flex;
+  align-content: center;
+  align-items: center;
+}
+
+.bgTrans {
+  background-color: transparent !important;
+}
+
+.txtCenter {
+  text-align: center;
+}
+
+.bgTrans .accordion-button {
+  background-color: transparent !important;
+  color: white !important;
+}
+
+.bgTrans .accordion-button:after {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='white'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+}
+
+.bgTrans .accordion-button:not(.collapsed)::after {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='white'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
 }
