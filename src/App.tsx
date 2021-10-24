@@ -19,6 +19,8 @@ import Card from "react-bootstrap/Card";
 import Image from "react-bootstrap/Image";
 import Modal from "react-bootstrap/Modal";
 
+import Table from "react-bootstrap/Table";
+
 import PoliticianGallery from "./components/PoliticianGallery/index";
 
 import Deputy from "./components/functions/deputy";
@@ -32,6 +34,11 @@ import { Radar } from '@ant-design/charts';
 import axios, {AxiosResponse} from "axios";
 const cheerio = require('cheerio');
 
+export async function setLegislature(id: number) {
+  const url = 'https://totalcors.herokuapp.com/https://www.camara.leg.br/deputados/' + id + '/biografia';
+  //const legilastures = await axios.get<>(url);
+}
+
 function App() {
   const [modalShow, setModalShow] = useState(false);
   
@@ -44,6 +51,12 @@ function App() {
   const [urlPolitician, setUrlPolitician] = useState<String>();
   const [idPolitician, setIdPolitician] = useState<number>();
   
+  const [legislatures, setLegislatures] = useState<Legislature>();
+  const [expenses, setExpenses] = useState<Expense>();
+  const [speechs, setSpeechs] = useState<Speech>();
+  const [attendances, setAttendance] = useState<Attendance>();
+
+  const [authorships, setAuthorships] = useState<Proposition>();
   const [reports, setReports] = useState<Proposition>();
 
   useEffect(() => {
@@ -70,14 +83,75 @@ function App() {
     star: number
   }
 
+  interface Legislature {
+    list: [
+      lg: string
+    ],
+    count: number
+  }
+
+  interface Speech {
+    types: any,
+    count: number
+  }
+
+  interface ParliamentaryExpenseList {
+    year: string,
+    month: string,
+    type: string,
+    documentCode: string,
+    documentType: string,
+    documentCodeType: string,
+    date: string,
+    documentNumber: string,
+    documentValue: number,
+    documentUrl: string,
+    providerName: string,
+    providerRegister: string,
+    netValue: number,
+    value: number,
+    refund: number,
+    partCode: string,
+    quota: string
+  } 
+
+  interface Expense {
+    cabinetExpense: number,
+    cabinetBudget: number,
+    parliamentaryQuotaExpense: number,
+    parliamentaryQuotaBudget: number,
+    parliamentaryExpenseListDescription: ParliamentaryExpenseList[],
+    range: number
+  }
+
+  interface Attendance {
+      committee: {
+        attendance: number,
+        justified: number,
+        miss: number
+      },
+      plenary: {
+        attendance: number,
+        miss: number,
+        deliberativedSessions: number,
+        dSAttendance: number,
+        dSJustified: number,
+        dSMiss: number
+      },
+      range: number
+  }
+
   function getData():Coordinate[] {
     var list:Coordinate[] = [];
-    list.push({name: "Legislaturas", star: (deputyCompleteData?.dados.id == null) ? 0 : deputyCompleteData.dados.id/1000 });
-    list.push({name: "Despesas", star: 200});
-    list.push({name: "Discursos", star: 150});
-    list.push({name: "Votações", star: 50});
-    list.push({name: "Presenças", star: 300});
-    list.push({name: "Leis Aprovadas", star: 250});
+    list.push({name: "Legislaturas", star: (legislatures?.count == null) ? 0 : legislatures.count*20 });
+    list.push({name: "Despesas", star: ( ( (expenses?.parliamentaryQuotaExpense == null && expenses?.parliamentaryQuotaBudget == null) ? 0 : ( (parseInt((100-((expenses.parliamentaryQuotaExpense/expenses.parliamentaryQuotaBudget)*100)).toFixed(2)) < 0) ? 0 : parseInt((100-((expenses.parliamentaryQuotaExpense/expenses.parliamentaryQuotaBudget)*100)).toFixed(2)) ) ) + ( (expenses?.cabinetExpense == null && expenses?.cabinetBudget == null) ? 0 : ( (parseInt((100-((expenses.cabinetExpense/expenses.cabinetBudget)*100)).toFixed(2)) < 0) ? 0 : parseInt((100-((expenses.cabinetExpense/expenses.cabinetBudget)*100)).toFixed(2)) ) ) )/2 });
+    list.push({name: "Discursos", star: (speechs?.count == null) ? 0 : speechs.count });
+    list.push({name: "Votações", star: 100});
+    list.push({name: "Presenças", star:
+      (attendances?.committee.attendance == null && attendances?.committee.miss == null && (attendances?.range == null || attendances?.range == 0) && attendances?.plenary.dSAttendance == null && attendances?.plenary.dSJustified == null && attendances?.plenary.dSMiss == null && attendances?.plenary.deliberativedSessions == null && (attendances?.range == null || attendances?.range == 0) ) ? 0 : 
+      (Math.round(((((attendances.committee.attendance + attendances.committee.justified - attendances.committee.miss)/(attendances.committee.attendance + attendances.committee.justified + attendances.committee.miss))/attendances.range)*100)) + Math.round(((((attendances.plenary.dSAttendance + attendances.plenary.dSJustified - attendances.plenary.dSMiss)/(attendances.plenary.deliberativedSessions))/attendances.range)*100)))/2
+    });
+    list.push({name: "Leis Aprovadas", star: parseInt( ((+((authorships?.total == null) ? 0 : authorships.total)+ +((reports?.total == null) ? 0 : reports.total))/((legislatures?.count == null) ? 1 : legislatures.count)).toFixed(2) ) });
     return list;
   }
 
@@ -112,9 +186,16 @@ function App() {
 
   function MyVerticallyCenteredModal(props: any) {
     console.log('dados');
+    console.log(deputyCompleteData);
+    console.log(deputyPartyData);
     console.log(deputyProfessionData);
     console.log(deputyOccupationData);
     console.log(reports);
+    console.log(authorships);
+    console.log(legislatures);
+    console.log(speechs);
+    console.log(attendances);
+    console.log(expenses);
 
     return (
       <Modal
@@ -126,8 +207,8 @@ function App() {
 
         <Modal.Header closeButton closeVariant="white" className="bg-dark wc">
 
-          <Modal.Title id="contained-modal-title-vcenter">
-            { toCapitalize(getDeputyInformation('name').toLowerCase()) }
+          <Modal.Title id="contained-modal-title-vcenter" className="cardTextLeft">
+            { toCapitalizeName(getDeputyInformation('name').toLowerCase()) } &nbsp; <span style={{ color: 'gray' }}>{ getDeputyInformation('eleitoralStatus').toLowerCase() } · { getDeputyInformation('status').toLowerCase() }</span>
           </Modal.Title>
 
         </Modal.Header>
@@ -149,9 +230,17 @@ function App() {
 
                 <h4 className="wc">Dados Pessoais</h4>
                 <br/>
-                <h6 className="cardTextLeft wc">Nascimento<span className="cardTextRight">{ getDeputyInformation('birthDate') }</span></h6>
+                <h6 className="cardTextLeft wc">Nascimento<span className="cardTextRight">{ nomarlizeDate(getDeputyInformation('birthDate'), 'ignore') }</span></h6>
                 <h6 className="cardTextLeft wc">Local<span className="cardTextRight">{ getDeputyInformation('birthPlace') } - { getDeputyInformation('birthPlaceState') }</span></h6>
                 <h6 className="cardTextLeft wc">Escolaridade<span className="cardTextRight">{ getDeputyInformation('schooling') }</span></h6>
+                <Accordion>
+                  <Accordion.Item eventKey="0" className="bgTrans wc">
+                    <Accordion.Header>Contatos</Accordion.Header>
+                      <Accordion.Body>
+                        { getDeputyList('contacts') }
+                      </Accordion.Body>
+                  </Accordion.Item>
+                </Accordion>
                 <br/>
                 <h4 className="wc">Profissão</h4>
                 <br/>
@@ -171,7 +260,7 @@ function App() {
 
                 <h4 className="wc">Estrutura do Partido Filiado</h4>
                 <br />
-                <Image width="150px" style={{ backgroundColor: 'white', borderRadius: '0.5em', padding: '10px' }} src={ getDeputyInformation('partyLogo') } />
+                <Image width="150px" style={{ backgroundColor: (partyLogo(getDeputyInformation('party')).border ? 'white' : 'transparent'), borderRadius: '0.5em', padding: '10px' }} src={ getDeputyInformation('partyLogo') } />
                 <br />
                 <br />
                 <h6 className="cardTextLeft wc">Partido<span className="cardTextRight">{ getDeputyInformation('partyName') }</span></h6>
@@ -180,6 +269,14 @@ function App() {
                 <br />
                 <br />
                 <h6 className="cardTextLeft wc">Líder<span className="cardTextRight">{ getDeputyInformation('leader') }</span></h6>
+                <Accordion>
+                  <Accordion.Item eventKey="0" className="bgTrans wc">
+                    <Accordion.Header>Dados Estruturais</Accordion.Header>
+                      <Accordion.Body>
+                        { getDeputyList('party') }
+                      </Accordion.Body>
+                  </Accordion.Item>
+                </Accordion>
 
               </Col>
 
@@ -202,22 +299,24 @@ function App() {
               <Col xs={12} md={12}>
                 <ListGroup variant="flush" className="cardTextLeft">
                   <ListGroup.Item  className="bgTrans wc">
-                    Legislaturas (56)<span className="cardTextRight">1</span>
+                    Legislaturas ({ (legislatures?.list == null) ? '' : legislatures.list.join( ' ' ) })<span className="cardTextRight">{ (legislatures?.count == null) ? 0 : legislatures.count }</span>
                   </ListGroup.Item>
                   <ListGroup.Item  className="bgTrans wc">
-                    Despesas (R$2.450.889,91)<span className="cardTextRight">23,3%</span>
+                    Despesas (R${ (expenses?.parliamentaryQuotaExpense == null) ? '' : expenses.parliamentaryQuotaExpense.toFixed(2) } | R${ (expenses?.cabinetExpense == null) ? '' : expenses.cabinetExpense.toFixed(2) })<span className="cardTextRight">{ ((expenses?.parliamentaryQuotaExpense == null && expenses?.parliamentaryQuotaBudget == null) ? 0 : parseInt((100-((expenses.parliamentaryQuotaExpense/expenses.parliamentaryQuotaBudget)*100)).toFixed(2)) + ((expenses?.cabinetExpense == null && expenses?.cabinetBudget == null) ? 0 : parseInt((100-((expenses.cabinetExpense/expenses.cabinetBudget)*100)).toFixed(2))))/2 }</span>
                   </ListGroup.Item>
                   <ListGroup.Item  className="bgTrans wc">
-                    Discursos<span className="cardTextRight">345</span>
+                    Discursos<span className="cardTextRight">{ (speechs?.count == null) ? 0 : speechs.count }</span>
                   </ListGroup.Item>
                   <ListGroup.Item  className="bgTrans wc">
                     Votações (609)<span className="cardTextRight">80,7%</span>
                   </ListGroup.Item>
                   <ListGroup.Item  className="bgTrans wc">
-                    Presenças (98/103)<span className="cardTextRight">94%</span>
+                    Presenças ({ (attendances?.committee.attendance == null && attendances?.committee.miss == null && (attendances?.range == null || attendances?.range == 0) && attendances?.plenary.dSAttendance == null && attendances?.plenary.dSJustified == null && attendances?.plenary.dSMiss == null && attendances?.plenary.deliberativedSessions == null && (attendances?.range == null || attendances?.range == 0) ) ? 0 : 
+                                                                  Math.round(((((attendances.committee.attendance + attendances.committee.justified - attendances.committee.miss)/(attendances.committee.attendance + attendances.committee.justified + attendances.committee.miss))/attendances.range)*100)) + "%" + " | " + Math.round(((((attendances.plenary.dSAttendance + attendances.plenary.dSJustified - attendances.plenary.dSMiss)/(attendances.plenary.deliberativedSessions))/attendances.range)*100)) + "%" })<span className="cardTextRight">{ (attendances?.committee.attendance == null && attendances?.committee.miss == null && (attendances?.range == null || attendances?.range == 0) && attendances?.plenary.dSAttendance == null && attendances?.plenary.dSJustified == null && attendances?.plenary.dSMiss == null && attendances?.plenary.deliberativedSessions == null && (attendances?.range == null || attendances?.range == 0) ) ? 0 : 
+                                                                  (Math.round(((((attendances.committee.attendance + attendances.committee.justified - attendances.committee.miss)/(attendances.committee.attendance + attendances.committee.justified + attendances.committee.miss))/attendances.range)*100)) + Math.round(((((attendances.plenary.dSAttendance + attendances.plenary.dSJustified - attendances.plenary.dSMiss)/(attendances.plenary.deliberativedSessions))/attendances.range)*100)))/2 }</span>
                   </ListGroup.Item>
                   <ListGroup.Item  className="bgTrans wc">
-                    Leis Aprovadas (0 + 3)<span className="cardTextRight">1,5</span>
+                    Leis Aprovadas ({ (authorships?.total == null) ? 0 : authorships.total } + { (reports?.total == null) ? 0 : reports.total } em { (legislatures?.count == null) ? 0 : ((legislatures.count == 1) ? legislatures.count + " legislatura" : legislatures.count + " legislaturas" ) })<span className="cardTextRight">{ ((+((authorships?.total == null) ? 0 : authorships.total)+ +((reports?.total == null) ? 0 : reports.total))/((legislatures?.count == null) ? 0 : legislatures.count)).toFixed(2) }</span>
                   </ListGroup.Item>
                 </ListGroup>
               </Col>
@@ -229,7 +328,7 @@ function App() {
                 <br/>
                 <Accordion>
                   <Accordion.Item eventKey="0">
-                    <Accordion.Header>Despesas (R$2.450.889,91)</Accordion.Header>
+                    <Accordion.Header>Despesas ({ (expenses?.parliamentaryQuotaExpense == null && expenses?.parliamentaryQuotaBudget == null) ? '' : (100-((expenses.parliamentaryQuotaExpense/expenses.parliamentaryQuotaBudget)*100)).toFixed(2) + "%" } | { (expenses?.cabinetExpense == null && expenses?.cabinetBudget == null) ? '' : (100-((expenses.cabinetExpense/expenses.cabinetBudget)*100)).toFixed(2) + "%" })</Accordion.Header>
                     <Accordion.Body>
                       Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
                       tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
@@ -241,33 +340,90 @@ function App() {
                     </Accordion.Body>
                   </Accordion.Item>
                   <Accordion.Item eventKey="1">
-                    <Accordion.Header>Discursos (345)</Accordion.Header>
+                    <Accordion.Header>Discursos ({ (speechs?.count == null) ? 0 : speechs.count })</Accordion.Header>
                     <Accordion.Body>
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                      tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-                      veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                      commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-                      velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                      cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-                      est laborum.
+                      { (speechs?.types == null) ? '' : (speechs.types.length == 0) ? '' : '| ' + respondJson(speechs.types).join(' ').toLowerCase() }
                     </Accordion.Body>
                   </Accordion.Item>
                   <Accordion.Item eventKey="2">
-                    <Accordion.Header>Presença (98)</Accordion.Header>
+                    <Accordion.Header>Presença ({ (attendances?.committee.attendance == null && attendances?.committee.miss == null && attendances?.range == null || attendances?.range == 0) ? '' : Math.round(((((attendances.committee.attendance + attendances.committee.justified - attendances.committee.miss)/(attendances.committee.attendance + attendances.committee.justified + attendances.committee.miss))/attendances.range)*100)) + "%" } | { (attendances?.plenary.dSAttendance == null && attendances?.plenary.dSJustified == null && attendances?.plenary.dSMiss == null && attendances?.plenary.deliberativedSessions == null && attendances?.range == null || attendances?.range == 0) ? '' : Math.round(((((attendances.plenary.dSAttendance + attendances.plenary.dSJustified - attendances.plenary.dSMiss)/(attendances.plenary.deliberativedSessions))/attendances.range)*100)) + "%" })</Accordion.Header>
                     <Accordion.Body>
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                      tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-                      veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                      commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-                      velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                      cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-                      est laborum.
+                      <h5>Presença em Comissão</h5>
+                      <Table responsive hover size="sm">
+                        <thead>
+                          <tr>
+                            <th>Descrição</th>
+                            <th style={{width: '10vw'}}>Valor</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>Resultado Percentual</td>
+                            <td>{ (attendances?.committee.attendance == null && attendances?.committee.miss == null && attendances?.range == null || attendances?.range == 0) ? '' : Math.round(((((attendances.committee.attendance + attendances.committee.justified - attendances.committee.miss)/(attendances.committee.attendance + attendances.committee.justified + attendances.committee.miss))/attendances.range)*100)) + "%" }</td>
+                          </tr>
+                          <tr>
+                            <td>Presenças</td>
+                            <td>{ (attendances?.committee.attendance == null ? '' : attendances.committee.attendance) }</td>
+                          </tr>
+                          <tr>
+                            <td>Ausências justificadas</td>
+                            <td>{ (attendances?.committee.justified == null ? '' : attendances.committee.justified) }</td>
+                          </tr>
+                          <tr>
+                            <td>Ausências não justificadas</td>
+                            <td>{ (attendances?.committee.miss == null ? '' : attendances.committee.miss) }</td>
+                          </tr>
+                        </tbody>
+                      </Table>
+                      <h5>Presença em Plenário</h5>
+                      <Table responsive hover size="sm">
+                        <thead>
+                          <tr>
+                            <th>Descrição</th>
+                            <th style={{width: '10vw'}}>Valor</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>Resultado Percentual</td>
+                            <td>{ (attendances?.plenary.dSAttendance == null && attendances?.plenary.dSJustified == null && attendances?.plenary.dSMiss == null && attendances?.plenary.deliberativedSessions == null && attendances?.range == null || attendances?.range == 0) ? '' : Math.round(((((attendances.plenary.dSAttendance + attendances.plenary.dSJustified - attendances.plenary.dSMiss)/(attendances.plenary.deliberativedSessions))/attendances.range)*100)) + "%" }</td>
+                          </tr>
+                          <tr>
+                            <td>Sessões deliberativas, realizadas em dias</td>
+                            <td>{ (attendances?.plenary.deliberativedSessions == null ? '' : attendances.plenary.deliberativedSessions) }</td>
+                          </tr>
+                          <tr>
+                            <td>Sessões deliberativas, dias com presença</td>
+                            <td>{ (attendances?.plenary.dSAttendance == null ? '' : attendances.plenary.dSAttendance) }</td>
+                          </tr>
+                          <tr>
+                            <td>Sessões deliberativas, ausências justificadas</td>
+                            <td>{ (attendances?.plenary.dSJustified == null ? '' : attendances.plenary.dSJustified) }</td>
+                          </tr>
+                          <tr>
+                            <td>Sessões deliberativas, ausências não justificadas</td>
+                            <td>{ (attendances?.plenary.dSMiss == null ? '' : attendances.plenary.dSMiss) }</td>
+                          </tr>
+                          <tr>
+                            <td></td>
+                            <td></td>
+                          </tr>
+                          <tr>
+                            <td>Sessões deliberativas com Ordem do Dia na Sessão Legislativa</td>
+                            <td>{ (attendances?.plenary.attendance == null ? '' : attendances.plenary.attendance) }</td>
+                          </tr>
+                          <tr>
+                            <td>Sessões deliberativas com Ordem do Dia, ausências não justificadas</td>
+                            <td>{ (attendances?.plenary.miss == null ? '' : attendances.plenary.miss) }</td>
+                          </tr>
+                        </tbody>
+                      </Table>
                     </Accordion.Body>
                   </Accordion.Item>
                   <Accordion.Item eventKey="3">
-                    <Accordion.Header>Proposições Aprovadas (0)</Accordion.Header>
+                    <Accordion.Header>Proposições Aprovadas ({ (authorships?.total == null) ? 0 : authorships.total } | { authorships?.propositions.length } { (authorships?.propositions.length == 1) ? 'encontrada' : 'encontradas' })</Accordion.Header>
                     <Accordion.Body>
-                      { getDeputyList('proposition') }
+                      { getDeputyList('authorship') }
                     </Accordion.Body>
                   </Accordion.Item>
                   <Accordion.Item eventKey="4">
@@ -293,89 +449,115 @@ function App() {
     );
   }
 
-  function partyLogo(party: string): string {
+  function partyLogo(party: string): any {
     let logo = '';
+    let border = false;
     switch (party) {
       case 'PL':
         logo = 'http://pl22.com.br/LOGO/MARCA_FINAL_PL.png'
+        border = true
         break;
       case 'PSOL':
         logo = 'https://psol50sp.org.br/wp-content/uploads/2019/12/Logo_PSOL-SP-13.png'
+        border = false
         break;
       case 'DEM':
         logo = 'https://logodownload.org/wp-content/uploads/2017/03/dem-democratas-logo-partido-7.png'
+        border = true
         break;
       case 'PSD':
         logo = 'http://www.psd-ba.org.br/imagens/psd-logo-manual-04.svg'
+        border = false
         break;
       case 'PSDB':
         logo = 'https://www.psdb.org.br/wp-content/themes/psdb-2017/dist/images/logo-nova.png'
+        border = false
         break;
       case 'PT':
         logo = 'https://pt.org.br/wp-content/themes/pt_2016/assets/images/ico-news-pt.png'
+        border = false
         break;
       case 'PSL':
         logo = 'https://seeklogo.com/images/P/psl-17-logo-E611BA820A-seeklogo.com.png'
+        border = true
         break;
       case 'PV':
         logo = 'https://pv.org.br/wp-content/uploads/2021/07/logo-vertical-destaque.png'
+        border = false
         break;
       case 'MDB':
         logo = 'https://logodownload.org/wp-content/uploads/2018/04/mdb-logo-partido-5.png'
+        border = true
         break;
       case 'NOVO':
         logo = 'https://a2.vnda.com.br/novo/2020/08/13/17_8_0_058_23_8_9_957_Novo30_AOC.svg'
+        border = false
         break;
       case 'PSC':
         logo = 'https://psc.org.br/wp-content/themes/psc/dist/images/logo20.png'
+        border = false
         break;
       case 'PP':
         logo = 'https://progressistas.org.br/website2020/wp-content/uploads/2020/12/logo.png'
+        border = false
         break;
       case 'PROS':
         logo = 'https://pros.org.br/wp-content/uploads/2021/02/pros-partido-republicano-da-ordem-social.png'
+        border = false
         break;
       case 'PCdoB':
         logo = 'http://www.isauralemos.com.br/wp-content/uploads/2012/04/logo-pcdob.jpg'
+        border = false
         break;
       case 'REDE':
         logo = 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Logomarca_da_Rede_Sustentabilidade_%28REDE%29%2C_do_Brasil.png/576px-Logomarca_da_Rede_Sustentabilidade_%28REDE%29%2C_do_Brasil.png'
+        border = true
         break;
       case 'REPUBLICANOS':
         logo = 'https://republicanos10.org.br/wp-content/uploads/2019/08/AF_Logo_Republicanos10_CMYK.png'
+        border = true
         break;
       case 'PATRIOTA':
         logo = 'https://patriota51.org.br/wp-content/uploads/2021/07/patriotasp-400x88-1.png'
+        border = true
         break;
       case 'PATRI':
         logo = 'https://patriota51.org.br/wp-content/uploads/2021/07/patriotasp-400x88-1.png'
+        border = true
         break;
       case 'PSB':
         logo = 'https://www.psb40.org.br/cms/wp-content/themes/psb40/assets/images/logo-footer.png'
+        border = false
         break;
       case 'PODE':
         logo = 'https://www.podemos.org.br/wp-content/uploads/2020/11/logo-podemos1.png'
+        border = true
         break;
       case 'AVANTE':
         logo = 'https://avante70.org.br/wp-content/themes/avante/assets/images/logo-sticky.png'
+        border = false
         break;
       case 'SOLIDARIEDADE':
         logo = 'https://www.solidariedade.org.br/media/2021/05/logo.svg'
+        border = true
         break;
       case 'PDT':
         logo = 'https://www.pdt.org.br/wp-content/uploads/2016/10/logo-vert-medio.png'
+        border = true
         break;
       case 'PTB':
         logo = 'https://ptb.org.br/wp-content/themes/ptb/v4/img/logo1-white-2.png'
+        border = false
         break;
       case 'CIDADANIA':
         logo = 'https://cidadania23.org.br/wp-content/uploads/2021/05/logo-retina-primary2-1.png'
+        border = true
         break;
 
       default:
         break;
     }
-    return logo;
+    return {logo: logo, border: border};
   }
 
   function getDeputyInformation(type: string): string {
@@ -396,11 +578,26 @@ function App() {
       case 'schooling':
         text = (deputyCompleteData?.dados.escolaridade == undefined) ? '' : deputyCompleteData.dados.escolaridade;
         break;
+      case 'party':
+        text = (deputyPartyData?.dados.sigla == undefined) ? '' : deputyPartyData.dados.sigla;
+        break;
       case 'partyLogo':
-        text = (deputyPartyData?.dados.sigla == undefined) ? partyLogo('') : partyLogo(deputyPartyData.dados.sigla);
+        text = (deputyPartyData?.dados.sigla == undefined) ? partyLogo('').logo : partyLogo(deputyPartyData.dados.sigla).logo;
         break;
       case 'partyName':
         text = (deputyPartyData?.dados.nome == undefined) ? '' : deputyPartyData?.dados.nome;
+        break;
+      case 'leader':
+        text = (deputyPartyData?.dados == undefined) ? '' : (deputyPartyData.dados.status?.lider == null) ? '' : deputyPartyData.dados.status.lider.nome;
+        break;
+      case 'leaderPhoto':
+        text = (deputyPartyData?.dados == undefined) ? '' : (deputyPartyData.dados.status?.lider == null) ? '' : deputyPartyData.dados.status.lider.urlFoto + 'maior.jpg';
+        break;
+      case 'status':
+        text = (deputyCompleteData?.dados.ultimoStatus.situacao == undefined) ? '' : deputyCompleteData?.dados.ultimoStatus.situacao;
+        break;
+      case 'eleitoralStatus':
+        text = (deputyCompleteData?.dados.ultimoStatus.condicaoEleitoral == undefined) ? '' : deputyCompleteData?.dados.ultimoStatus.condicaoEleitoral;
         break;
     
       default:
@@ -414,8 +611,8 @@ function App() {
       return deputyProfessionData?.dados.map((profession, idx) => (
 
         <ListGroup variant="flush" className="cardTextLeft">
-          <ListGroup.Item  className="bgTrans wc">
-            <h6>{ profession.titulo }<span className="cardTextRight">{ profession.dataHora }</span></h6>
+          <ListGroup.Item  style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }} className="bgTrans wc">
+            <div style={{ display: 'flex', alignItems: 'flex-end', width: '48px', height: '48px' }}><Image src={ getProfessionIcon(profession.titulo) } /><h6>&nbsp;{ profession.titulo }</h6></div><h6 className="">{ nomarlizeDate(profession.dataHora, 'ignore') }</h6>
           </ListGroup.Item>
         </ListGroup>
 
@@ -463,6 +660,162 @@ function App() {
 
         ));
 
+      if(type == 'authorship')
+        return authorships?.propositions.map((authorship, idx) => (
+
+          <ListGroup variant="flush" className="cardTextLeft">
+            <ListGroup.Item  className="">
+              <h6>{ authorship.name }<span className="cardTextRight"><a href={ 'https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=' + authorship.link.substring(20, authorship.link.length) }>Acompanhe</a></span></h6>
+            </ListGroup.Item>
+          </ListGroup>
+
+        ));
+      if(type == 'contacts')
+        return <ListGroup variant="flush" className="cardTextLeft">
+        { (deputyCompleteData?.dados.urlWebsite != null) ?
+          <ListGroup.Item  className="bgTrans wc">
+            Web-site<span className="cardTextRight"><a href={ deputyCompleteData?.dados.urlWebsite }>{ deputyCompleteData?.dados.urlWebsite }</a></span>
+          </ListGroup.Item>
+          : null
+        }
+        { (deputyCompleteData?.dados.ultimoStatus.email != null) ?
+          <ListGroup.Item  className="bgTrans wc">
+            E-mail<span className="cardTextRight">{ deputyCompleteData.dados.ultimoStatus.email }</span>
+          </ListGroup.Item>
+          : null
+        }
+        { (deputyCompleteData?.dados.ultimoStatus.gabinete.predio != null || deputyCompleteData?.dados.ultimoStatus.gabinete.andar != null || deputyCompleteData?.dados.ultimoStatus.gabinete.sala != null || deputyCompleteData?.dados.ultimoStatus.gabinete.email != null || deputyCompleteData?.dados.ultimoStatus.gabinete.telefone != null) ? <h6><br/>Gabinete</h6>: null }
+        { (deputyCompleteData?.dados.ultimoStatus.gabinete.predio != null || deputyCompleteData?.dados.ultimoStatus.gabinete.andar != null || deputyCompleteData?.dados.ultimoStatus.gabinete.sala != null) ?
+          <ListGroup.Item  className="bgTrans wc">
+            Endereço do gabinete<span className="cardTextRight">{ (deputyCompleteData?.dados.ultimoStatus.gabinete.predio) ? 'prédio ' + deputyCompleteData.dados.ultimoStatus.gabinete.predio + ', ' : '' }{ (deputyCompleteData?.dados.ultimoStatus.gabinete.andar) ? deputyCompleteData.dados.ultimoStatus.gabinete.andar + 'º andar, ' : '' }{ (deputyCompleteData?.dados.ultimoStatus.gabinete.sala) ? 'sala ' + deputyCompleteData.dados.ultimoStatus.gabinete.sala : '' }</span>
+          </ListGroup.Item>
+          : null
+        }
+        { (deputyCompleteData?.dados.ultimoStatus.gabinete.email) ?
+          <ListGroup.Item  className="bgTrans wc">
+            E-mail<span className="cardTextRight">{ deputyCompleteData.dados.ultimoStatus.gabinete.email }</span>
+          </ListGroup.Item>
+          : null
+        }
+        { (deputyCompleteData?.dados.ultimoStatus.gabinete.telefone) ?
+          <ListGroup.Item  className="bgTrans wc">
+            Telefône<span className="cardTextRight">{ deputyCompleteData.dados.ultimoStatus.gabinete.telefone }</span>
+          </ListGroup.Item>
+          : null
+        }
+        { (deputyCompleteData?.dados.redeSocial != null) ? (deputyCompleteData?.dados.redeSocial.length > 0) ? <h6><br/>Redes Sociais</h6> : null : null }
+        { deputyCompleteData?.dados.redeSocial.map((network, idx: number) => (
+          
+            <ListGroup.Item  className="bgTrans wc">
+              <span className="cardTextRight">{ network }</span>
+            </ListGroup.Item>
+           
+          ))
+        }
+        <br />
+      </ListGroup>;
+      if(type == 'party')
+        return <ListGroup variant="flush" className="cardTextLeft">
+            { (deputyPartyData?.dados.status.situacao != null) ?
+              <ListGroup.Item  className="bgTrans wc">
+                Situação<span className="cardTextRight">{ deputyPartyData.dados.status.situacao }</span>
+              </ListGroup.Item>
+              : null
+            }
+            { (deputyPartyData?.dados.status.totalMembros != null) ?
+              <ListGroup.Item  className="bgTrans wc">
+                Membros<span className="cardTextRight">{ deputyPartyData.dados.status.totalMembros }</span>
+              </ListGroup.Item>
+              : null
+            }
+            { (deputyPartyData?.dados.status.totalPosse != null) ?
+              <ListGroup.Item  className="bgTrans wc">
+                Empossados<span className="cardTextRight">{ deputyPartyData.dados.status.totalPosse }</span>
+              </ListGroup.Item>
+              : null
+            }
+            <br />
+          </ListGroup>;
+
+  }
+
+  function getProfessionIcon(profession: string):string {
+    switch (profession) {
+      case 'Empresário':
+        return "https://d1b1fjiwh8olf2.cloudfront.net/icon/free/svg/1410046.svg?token=eyJhbGciOiJoczI1NiIsImtpZCI6ImRlZmF1bHQifQ__.eyJpc3MiOiJkMWIxZmppd2g4b2xmMi5jbG91ZGZyb250Lm5ldCIsImV4cCI6MTYzNTEyMDAwMCwicSI6bnVsbCwiaWF0IjoxNjM0ODYxMjU1fQ__.d4d127c5f6849d327d36ffcf96988fdc99ede0dcb5463a886695496afe174935"
+
+      case 'Empresária':
+        return "https://d1b1fjiwh8olf2.cloudfront.net/icon/free/svg/1410046.svg?token=eyJhbGciOiJoczI1NiIsImtpZCI6ImRlZmF1bHQifQ__.eyJpc3MiOiJkMWIxZmppd2g4b2xmMi5jbG91ZGZyb250Lm5ldCIsImV4cCI6MTYzNTEyMDAwMCwicSI6bnVsbCwiaWF0IjoxNjM0ODYxMjU1fQ__.d4d127c5f6849d327d36ffcf96988fdc99ede0dcb5463a886695496afe174935"
+
+      case 'Advogado':
+        return ''
+
+      case 'Advogada':
+        return ''
+
+      case 'Agropecuarista':
+        return ''
+
+      case 'Médico':
+        return "https://d1b1fjiwh8olf2.cloudfront.net/icon/free/svg/1410038.svg?token=eyJhbGciOiJoczI1NiIsImtpZCI6ImRlZmF1bHQifQ__.eyJpc3MiOiJkMWIxZmppd2g4b2xmMi5jbG91ZGZyb250Lm5ldCIsImV4cCI6MTYzNTEyMDAwMCwicSI6bnVsbCwiaWF0IjoxNjM0ODYxNjE4fQ__.0187f14b075ad7d1a3cc1d65135f32370c2141fb580c6da76f96f8ebae1366d4"
+
+      case 'Médica':
+        return "https://d1b1fjiwh8olf2.cloudfront.net/icon/free/svg/1410038.svg?token=eyJhbGciOiJoczI1NiIsImtpZCI6ImRlZmF1bHQifQ__.eyJpc3MiOiJkMWIxZmppd2g4b2xmMi5jbG91ZGZyb250Lm5ldCIsImV4cCI6MTYzNTEyMDAwMCwicSI6bnVsbCwiaWF0IjoxNjM0ODYxNjE4fQ__.0187f14b075ad7d1a3cc1d65135f32370c2141fb580c6da76f96f8ebae1366d4"
+
+      case 'Professor':
+        return "https://d1b1fjiwh8olf2.cloudfront.net/icon/free/svg/1409981.svg?token=eyJhbGciOiJoczI1NiIsImtpZCI6ImRlZmF1bHQifQ__.eyJpc3MiOiJkMWIxZmppd2g4b2xmMi5jbG91ZGZyb250Lm5ldCIsImV4cCI6MTYzNTEyMDAwMCwicSI6bnVsbCwiaWF0IjoxNjM0ODYxNzQxfQ__.e23f7d922283f26f01bde8b2e3b9ba4e429b611b6156a9f7fd0ce60f0e10a135"
+
+      case 'Professora':
+        return "https://d1b1fjiwh8olf2.cloudfront.net/icon/free/svg/1409980.svg?token=eyJhbGciOiJoczI1NiIsImtpZCI6ImRlZmF1bHQifQ__.eyJpc3MiOiJkMWIxZmppd2g4b2xmMi5jbG91ZGZyb250Lm5ldCIsImV4cCI6MTYzNTEyMDAwMCwicSI6bnVsbCwiaWF0IjoxNjM0ODYxNzQxfQ__.ba3bc668fba8677d34af6f57294b53caef56c249037722cbe46186c894a24689"
+
+      case 'Servidor público':
+        return ''
+
+      case 'Servidora pública':
+        return ''
+
+      case 'Administrador':
+        return ''
+
+      case 'Administradora':
+        return ''
+
+      case 'Engenheiro':
+        return "https://d1b1fjiwh8olf2.cloudfront.net/icon/free/svg/1409975.svg?token=eyJhbGciOiJoczI1NiIsImtpZCI6ImRlZmF1bHQifQ__.eyJpc3MiOiJkMWIxZmppd2g4b2xmMi5jbG91ZGZyb250Lm5ldCIsImV4cCI6MTYzNTEyMDAwMCwicSI6bnVsbCwiaWF0IjoxNjM0ODYxODMwfQ__.ba53390971de16cc36ae27238ee03ad686c4da93113d83ab3db4c6b9c5b95b5d"
+
+      case 'Engenheira':
+        return "https://d1b1fjiwh8olf2.cloudfront.net/icon/free/svg/1409975.svg?token=eyJhbGciOiJoczI1NiIsImtpZCI6ImRlZmF1bHQifQ__.eyJpc3MiOiJkMWIxZmppd2g4b2xmMi5jbG91ZGZyb250Lm5ldCIsImV4cCI6MTYzNTEyMDAwMCwicSI6bnVsbCwiaWF0IjoxNjM0ODYxODMwfQ__.ba53390971de16cc36ae27238ee03ad686c4da93113d83ab3db4c6b9c5b95b5d"
+
+      case 'Policial':
+        return "https://d1b1fjiwh8olf2.cloudfront.net/icon/free/svg/1410003.svg?token=eyJhbGciOiJoczI1NiIsImtpZCI6ImRlZmF1bHQifQ__.eyJpc3MiOiJkMWIxZmppd2g4b2xmMi5jbG91ZGZyb250Lm5ldCIsImV4cCI6MTYzNTEyMDAwMCwicSI6bnVsbCwiaWF0IjoxNjM0ODYxOTE1fQ__.1d70b1c549b3cdb5012ab8ac104fb2ae3c9244964024fdd47f50192e758fdbe6"
+
+      case 'Jornalista':
+        return ''
+
+      case 'Pastor':
+        return "https://d1b1fjiwh8olf2.cloudfront.net/icon/free/svg/1410002.svg?token=eyJhbGciOiJoczI1NiIsImtpZCI6ImRlZmF1bHQifQ__.eyJpc3MiOiJkMWIxZmppd2g4b2xmMi5jbG91ZGZyb250Lm5ldCIsImV4cCI6MTYzNTEyMDAwMCwicSI6bnVsbCwiaWF0IjoxNjM0ODYxOTU1fQ__.df32bb02b84767ce0365fc09041214f6738928a877fa4a8be1c8c1794d2664b8"
+
+      case 'Pastora':
+        return "https://d1b1fjiwh8olf2.cloudfront.net/icon/free/svg/1410002.svg?token=eyJhbGciOiJoczI1NiIsImtpZCI6ImRlZmF1bHQifQ__.eyJpc3MiOiJkMWIxZmppd2g4b2xmMi5jbG91ZGZyb250Lm5ldCIsImV4cCI6MTYzNTEyMDAwMCwicSI6bnVsbCwiaWF0IjoxNjM0ODYxOTU1fQ__.df32bb02b84767ce0365fc09041214f6738928a877fa4a8be1c8c1794d2664b8"
+
+      case 'Economista':
+        return ''
+
+      case 'Militar':
+        return "https://d1b1fjiwh8olf2.cloudfront.net/icon/free/svg/1410053.svg?token=eyJhbGciOiJoczI1NiIsImtpZCI6ImRlZmF1bHQifQ__.eyJpc3MiOiJkMWIxZmppd2g4b2xmMi5jbG91ZGZyb250Lm5ldCIsImV4cCI6MTYzNTEyMDAwMCwicSI6bnVsbCwiaWF0IjoxNjM0ODYxNDI1fQ__.f3258576e39c0af77973bb2c3ead6a5c81fdfdaf07f2fe98aff7c412834cbc83"
+
+      case 'Bancário':
+        return ''
+
+      case 'Bancária':
+        return ''
+
+      case 'Estudante':
+        return "https://d1b1fjiwh8olf2.cloudfront.net/icon/free/svg/1409986.svg?token=eyJhbGciOiJoczI1NiIsImtpZCI6ImRlZmF1bHQifQ__.eyJpc3MiOiJkMWIxZmppd2g4b2xmMi5jbG91ZGZyb250Lm5ldCIsImV4cCI6MTYzNTEyMDAwMCwicSI6bnVsbCwiaWF0IjoxNjM0ODYyMDQxfQ__.8bf4471cbb30302f2e9dde192012218215adcc574dcd0352c988870ef88d80ea"
+
+      default:
+        return ''
+    }
   }
 
   function setCurrentPolitician(urlPolitician: string, urlParty: string) {
@@ -496,9 +849,68 @@ function App() {
 
   }
 
+  function nomarlizeDate(text: string, order: string):string {
+
+    var words = (text ? text.split('-') : ['', '', ''])
+
+    console.log("words")
+    console.log(words)
+
+    if (order != null) {
+      
+        var division = (words[2] ? words[2].split('T') : ['', ''])
+        words[2] = division[0]
+        if (order == 'ignore')
+          return words[2] + (words[2] == '' ? '' : '/') + words[1] + (words[1] == '' ? '' : '/') + words[0]
+        if (order == 'withTime')
+          return words[2] + (words[2] == '' ? '' : '/') + words[1] + (words[1] == '' ? '' : '/') + words[0] + (division[1] == '' || division[1] == undefined ? '' : ' (' + division[1] + ')')
+        return words[2] + (words[2] == '' ? '' : '/') + words[1] + (words[1] == '' ? '' : '/') + words[0]
+      
+    } else
+      return words[2] + (words[2] == '' ? '' : '/') + words[1] + (words[1] == '' ? '' : '/') + words[0]
+    
+  };
+
+  function toCapitalizeName(text: string):string {
+    /*const matches = str.matchAll(/\w{3,}/g);
+
+    for(let match of matches) {
+      let ind = (match.index ? match.index : 0)
+      str = str.substring(0, ind) + match[0].charAt(0).toUpperCase() + match[0].slice(1) + str.substring(ind + match[0].length);
+    }
+    return str;*/
+
+    var words = text.replace(/(?:^|\s)\S/g, function(first: string):string { return first.toUpperCase(); }).split(' ')
+    for (let ind = 0; ind < words.length; ind++) {
+      if (words[ind] == 'Da' || words[ind] == 'Do' || words[ind] == 'De' || words[ind] == 'Di' || words[ind] == 'Das' || words[ind] == 'Dos'
+      || words[ind] == 'Van' || words[ind] == 'Von' || words[ind] == 'Del' || words[ind] == 'E')
+        words[ind] = words[ind].toLowerCase() 
+    }
+    return words.join(' ');
+
+  };
+
   function toCapitalize(text: string):string {
     return text.replace(/(?:^|\s)\S/g, function(first: string):string { return first.toUpperCase(); });
   };
+
+  function respondJson(json: any):string[] {
+
+    var keys = []
+    var data = []
+
+    for(var k in json) {
+      keys.push(k)
+    }
+
+    for (let i = 0; i < keys.length; i++) {
+      data.push(keys[i])
+      data.push(json[keys[i]] + ' |')
+    }
+
+    return data
+
+  }
 
   function setCurrentPoliticianCareer() {
 
@@ -528,6 +940,450 @@ function App() {
 
     getProfession();
     getOccupation();
+
+  }
+
+  function setLegislaturesData(id: number) {
+
+    let legislatureList:Legislature = {} as Legislature;
+    legislatureList.list = [ '' ]
+    legislatureList.count = 0
+
+    legislatureList.list.pop()
+
+    axios.get('https://totalcors.herokuapp.com/https://www.camara.leg.br/deputados/' + id + '/biografia').then((response) => {
+      const $ = cheerio.load(response.data)
+
+      const urlElems = $('section > p > a')
+
+      console.log("legisture")
+      console.log(urlElems)
+
+      urlElems.each(
+        (ind: number, val: any) => {
+
+          if(urlElems.length/2 > ind)
+            legislatureList.list.push(String($(val).text()).trim());
+
+        }
+      )
+
+      legislatureList.count = legislatureList.list.length
+    })
+
+    setLegislatures(legislatureList)
+
+  }
+
+  function setExpensesData(id: number, page:number) {
+
+    const years = ['2019']
+    const cabinetBudget = 111675.59*12*years.length
+
+    const state = (deputyCompleteData?.dados.ultimoStatus.siglaUf == null) ? '' : deputyCompleteData.dados.ultimoStatus.siglaUf
+    var parliamentaryQuotaBudget
+
+    switch (state) {
+      case 'AC':
+        parliamentaryQuotaBudget = 44632.46*12*years.length
+        break;
+      case 'AL':
+        parliamentaryQuotaBudget = 40944.10*12*years.length
+        break;
+      case 'AM':
+        parliamentaryQuotaBudget = 43570.12*12*years.length
+        break;
+      case 'AP':
+        parliamentaryQuotaBudget = 43374.78*12*years.length
+        break;
+      case 'BA':
+        parliamentaryQuotaBudget = 39010.85*12*years.length
+        break;
+      case 'CE':
+        parliamentaryQuotaBudget = 42451.77*12*years.length
+        break;
+      case 'DF':
+        parliamentaryQuotaBudget = 30788.66*12*years.length
+        break;
+      case 'ES':
+        parliamentaryQuotaBudget = 37423.91*12*years.length
+        break;
+      case 'GO':
+        parliamentaryQuotaBudget = 35507.06*12*years.length
+        break;
+      case 'MA':
+        parliamentaryQuotaBudget = 42151.69*12*years.length
+        break;
+      case 'MG':
+        parliamentaryQuotaBudget = 36092.71*12*years.length
+        break;
+      case 'MS':
+        parliamentaryQuotaBudget = 40542.84*12*years.length
+        break;
+      case 'MT':
+        parliamentaryQuotaBudget = 39428.03*12*years.length
+        break;
+      case 'PA':
+        parliamentaryQuotaBudget = 42227.45*12*years.length
+        break;
+      case 'PB':
+        parliamentaryQuotaBudget = 42032.56*12*years.length
+        break;
+      case 'PE':
+        parliamentaryQuotaBudget = 41676.80*12*years.length
+        break;
+      case 'PI':
+        parliamentaryQuotaBudget = 40971.77*12*years.length
+        break;
+      case 'PR':
+        parliamentaryQuotaBudget = 38871.86*12*years.length
+        break;
+      case 'RJ':
+        parliamentaryQuotaBudget = 35759.97*12*years.length
+        break;
+      case 'RN':
+        parliamentaryQuotaBudget = 42731.99*12*years.length
+        break;
+      case 'RO':
+        parliamentaryQuotaBudget = 43672.49*12*years.length
+        break;
+      case 'RR':
+        parliamentaryQuotaBudget = 45612.53*12*years.length
+        break;
+      case 'RS':
+        parliamentaryQuotaBudget = 40875.90*12*years.length
+        break;
+      case 'SC':
+        parliamentaryQuotaBudget = 39877.78*12*years.length
+        break;
+      case 'SE':
+        parliamentaryQuotaBudget = 40139.26*12*years.length
+        break;
+      case 'SP':
+        parliamentaryQuotaBudget = 37043.53*12*years.length
+        break;
+      case 'TO':
+        parliamentaryQuotaBudget = 39503.61*12*years.length
+        break;
+    
+      default:
+        break;
+    }
+
+    let expensesData:Expense = {} as Expense;
+    expensesData.cabinetExpense = 0
+    expensesData.cabinetBudget = cabinetBudget
+    expensesData.parliamentaryQuotaExpense = 0
+    expensesData.parliamentaryQuotaBudget = (parliamentaryQuotaBudget == null) ? 0 : parliamentaryQuotaBudget
+    expensesData.parliamentaryExpenseListDescription = []
+    expensesData.range = years.length
+
+    function paginationExpense(id: number, page: number, y: number) {
+
+      axios.get('https://dadosabertos.camara.leg.br/api/v2/deputados/' + id + '/despesas?ano=' + years[y] + '&pagina=' + page + '&itens=1000&ordem=ASC&ordenarPor=mes').then((response) => {
+
+        const cabinetExpenses = response.data.dados;
+
+        console.log("GABINETE")
+        console.log(cabinetExpenses)
+
+        for (let a = 0; a < cabinetExpenses.length; a++) {
+          expensesData.parliamentaryExpenseListDescription.push(
+            {
+              year: cabinetExpenses[a].ano,
+              month: cabinetExpenses[a].mes,
+              type: cabinetExpenses[a].tipoDespesa,
+              documentCode: cabinetExpenses[a].codDocumento,
+              documentType: cabinetExpenses[a].tipoDocumento,
+              documentCodeType: cabinetExpenses[a].codTipoDocumento,
+              date: cabinetExpenses[a].dataDocumento,
+              documentNumber: cabinetExpenses[a].numDocumento,
+              documentValue: cabinetExpenses[a].valorDocumento,
+              documentUrl: cabinetExpenses[a].urlDocumento,
+              providerName: cabinetExpenses[a].nomeFornecedor,
+              providerRegister: cabinetExpenses[a].cnpjCpfFornecedor,
+              netValue: cabinetExpenses[a].valorLiquido,
+              value: cabinetExpenses[a].valorGlosa,
+              refund: cabinetExpenses[a].numRessarcimento,
+              partCode: cabinetExpenses[a].codLote,
+              quota: cabinetExpenses[a].parcela
+            }
+          )
+          expensesData.parliamentaryQuotaExpense += cabinetExpenses[a].valorDocumento
+        }
+
+        if(cabinetExpenses.length == 100) {
+          page++;
+          paginationExpense(id, page, y)
+        }
+
+      })
+
+    }
+
+    for (let y = 0; y < years.length; y++) {
+
+      paginationExpense(id, page, y)
+
+      axios.get('https://totalcors.herokuapp.com/https://www.camara.leg.br/deputados/' + id + '/verba-gabinete?ano=' + years[y]).then((response) => {
+          const $ = cheerio.load(response.data)
+
+          const urlElems = $('table > tbody > tr')
+
+          var expensesList:string[] = []
+
+          urlElems.each(
+              (ind:number, val:string) => {
+                expensesList = expensesList.concat($(val).find('td').last().text())
+              }
+          )
+
+          var expensesLast:number[] = []
+
+          for (let i = 0; i < expensesList.length; i++) {
+              if(expensesList[i] != '')
+                expensesLast.push(parseFloat(expensesList[i].replace('.','').replace(',','.')))
+          }
+
+          expensesData.cabinetExpense += expensesLast.reduce((a, b) => a + b, 0)
+          
+      })
+
+    }
+
+    setExpenses(expensesData)
+    
+  }
+
+  function setSpeechData(id: number, page: number) {
+
+    let speechsList:Speech = {} as Speech;
+    speechsList.types = {};
+    speechsList.count = 0;
+
+    function counting(id: number, page: number) {
+    
+      axios.get('https://dadosabertos.camara.leg.br/api/v2/deputados/' + id + '/discursos?idLegislatura=56&dataInicio=2019-01-01&dataFim=2020-12-31&ordenarPor=dataHoraInicio&ordem=ASC&itens=100&pagina=' + page).then((response) => {
+
+        const speechs = response.data.dados;
+        
+        for (var k = speechs.length - 1; k >= 0; k--)
+          if(!speechsList.types.hasOwnProperty(speechs[k].tipoDiscurso))
+            speechsList.types[speechs[k].tipoDiscurso] = 1;
+          else
+            speechsList.types[speechs[k].tipoDiscurso]++;
+
+        speechsList.count += speechs.length;
+        
+        if(speechs.length == 100) {
+          page++;
+          counting(id, page)
+        }
+
+      })
+
+    }
+
+    counting(id, page);
+
+    setSpeechs(speechsList)
+
+  }
+
+  function setVoting(id: number) {
+    
+  }
+
+  function setAttendanceData(id: number) {
+
+    const years = ['2019']
+
+    let attendanceData:Attendance = {} as Attendance;
+    attendanceData.committee = { attendance: 0, justified: 0, miss: 0}
+    attendanceData.plenary = { attendance: 0, miss: 0, deliberativedSessions: 0, dSAttendance: 0, dSJustified: 0, dSMiss: 0 }
+
+    //attendanceData.plenary.pop()
+
+    var committeeAttendanceList:string[] = []
+    var plenaryAttendanceList:string[] = []
+    var plenaryAttendanceCalc:number[] = []
+
+    for (let j = 0; j < years.length; j++) {
+
+      axios.get('https://totalcors.herokuapp.com/https://www.camara.leg.br/deputados/' + id + '/presenca-comissoes/' + years[j]).then((response) => {
+
+          const $ = cheerio.load(response.data)
+
+          const urlElems = $('table > tbody > tr')
+
+          urlElems.each(
+              (ind: number, val:string) => {
+                committeeAttendanceList = committeeAttendanceList.concat($(val).find('td').last().text().replace(/\s\s+/g, '').split(/(?=[A-Z])/))
+              }
+          )
+
+          var cAttendance = 0
+          var cJustified = 0
+          var cMiss = 0
+
+          for (let i = 0; i < committeeAttendanceList.length; i++) {
+            if(committeeAttendanceList[i] == 'Presença')
+              cAttendance++
+            if(committeeAttendanceList[i] == 'Ausência justificada')
+              cJustified++
+            if(committeeAttendanceList[i] == 'Ausência não justificada')
+              cMiss++
+          }
+          
+          attendanceData.committee.attendance += cAttendance
+          attendanceData.committee.justified += cJustified
+          attendanceData.committee.miss += cMiss
+
+      })
+
+      axios.get('https://totalcors.herokuapp.com/https://www.camara.leg.br/deputados/' + id + '/presenca-plenario/' + years[j]).then((response) => {
+
+          const $ = cheerio.load(response.data)
+
+          const urlElems = $('table:nth-of-type(2) > tbody > tr')
+
+          urlElems.each(
+              (ind:number, val:string) => {
+                plenaryAttendanceList = plenaryAttendanceList.concat($(val).find('td').last().prev().text().replace(/\s\s+/g, '').trim())
+              }
+          )
+
+          for (let i = 0; i < plenaryAttendanceList.length; i++) {
+            if(plenaryAttendanceList[i] != '')
+              plenaryAttendanceCalc.push(parseInt(plenaryAttendanceList[i]))
+          }
+
+          attendanceData.plenary.attendance += plenaryAttendanceCalc[0]
+          attendanceData.plenary.miss += plenaryAttendanceCalc[1]
+          attendanceData.plenary.deliberativedSessions += plenaryAttendanceCalc[2]
+          attendanceData.plenary.dSAttendance += plenaryAttendanceCalc[3]
+          attendanceData.plenary.dSJustified += plenaryAttendanceCalc[4]
+          attendanceData.plenary.dSMiss += plenaryAttendanceCalc[5]
+
+      })
+    }
+
+    attendanceData.range = years.length
+
+    setAttendance(attendanceData)
+  }
+
+  function setAuthorshipPropositions(id: number) {
+
+    let propositionList:Proposition = {} as Proposition;
+
+    propositionList.propositions = [{
+      name: 'string',
+      link: 'string'
+    }];
+
+    propositionList.propositions.pop();
+
+    const getPropositionsApproved = () => {
+
+      axios.get('https://totalcors.herokuapp.com/https://www.camara.leg.br/internet/sileg/Prop_lista.asp?Autor=0&ideCadastro=' + idPolitician + '&Limite=N&tipoProp=2')
+        .then((response) => {
+
+          const $ = cheerio.load(response.data);
+
+          if(response.headers['x-final-url'].includes("Prop_lista")) {
+
+            const urlElemsNumber = $('b')
+
+            const arrayNumber = urlElemsNumber.text().trim().split("\n")
+
+            var number;
+
+            for (let i = 0; i < arrayNumber.length; i++)
+                if(arrayNumber[i].includes('Foram encontrados'))
+                    number = arrayNumber[i].match(/\b(\w+)\b/g)[2]
+
+            propositionList.total = number;
+
+            console.log(propositionList);
+
+            for (let index = 2; index < Math.ceil(number/30)+1; index++)
+            
+              axios.get('https://totalcors.herokuapp.com/https://www.camara.leg.br/internet/sileg/Prop_lista.asp?Pagina=' + index + '&Autor=0&ideCadastro=' + idPolitician + '&Limite=N&tipoProp=2').then((response) => {
+
+                const $ = cheerio.load(response.data)
+
+                const urlElems2 = $('table > tbody > tr > td > a')
+
+                urlElems2.each(
+                    (idx:number, val:any) => {
+
+                      var obj = {
+                        name: $(val).text(),
+                        link: $(val).attr('href')
+                      };
+                      console.log(obj)
+                      propositionList.propositions.push(obj)
+
+                    }
+                )
+
+              })
+
+            const urlElems = $('table > tbody > tr > td > a')
+
+            urlElems.each(
+
+                (idx:number, val:any) => {
+
+                  var obj = {
+                    name: $(val).text(),
+                    link: $(val).attr('href')
+                  };
+                  console.log(obj)
+                  propositionList.propositions.push(obj)
+
+                }
+
+            )
+
+            setAuthorships(propositionList);
+
+        } else {
+          //revisar
+          propositionList.total = 1;
+
+          const urlElems = $('h3');
+
+          const array:string[] = urlElems.text().split("\n");
+
+          array.forEach(element => {
+            element.replace("Inteiro teor", "");
+            element.trim();
+          });
+
+          for (let i = 0; i < array.length; i++) {
+
+            if (i == 1){
+              array[i] = array[i].replace("Inteiro teor", "");
+              var obj = {
+                name: array[i].trim(),
+                link: response.headers['x-final-url']
+              };
+              propositionList.propositions.push(obj);
+            }
+
+          }
+
+          setAuthorships(propositionList);
+
+        }
+
+      })
+
+    }
+
+    getPropositionsApproved();
 
   }
 
@@ -651,7 +1507,7 @@ function App() {
 
       <div className="cards-container">
 
-        <PoliticianGallery />
+        {/*<PoliticianGallery />*/}
 
         {
 
@@ -667,7 +1523,12 @@ function App() {
                   setUrlPolitician(politician.uri)
                   setCurrentPolitician(politician.uri, politician.uriPartido)
                   setCurrentPoliticianCareer()
+                  setAuthorshipPropositions(politician.id)
                   setPropositionsReport(politician.id)
+                  setLegislaturesData(politician.id)
+                  setSpeechData(politician.id, 1)
+                  setAttendanceData(politician.id)
+                  setExpensesData(politician.id, 1)
 
                 }}
             >

@@ -11,7 +11,7 @@ export default interface IDeputyParty {
         totalPosse: number;
         totalMembros: number;
         uriMembros: string;
-        líder: {
+        lider: {
             uri: string;
             nome: string;
             siglaPartido: string;

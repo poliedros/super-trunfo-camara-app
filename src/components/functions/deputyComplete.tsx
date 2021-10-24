@@ -30,7 +30,7 @@ export default interface IDeputyComplete {
     cpf: number;
     sexo: string;
     urlWebsite: string;
-    redeSocial: string;
+    redeSocial: string[];
     dataNascimento: string;
     dataFalecimento: string;
     ufNascimento: string;
