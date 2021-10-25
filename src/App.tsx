@@ -34,6 +34,7 @@ import { Radar } from "@ant-design/charts";
 
 import axios, { AxiosResponse } from "axios";
 import { Coordinate } from "./interfaces/Coordinate";
+import { partyLogoDictionary } from "./data/partyLogoDictionary";
 
 const cheerio = require("cheerio");
 
@@ -808,137 +809,14 @@ function App() {
     );
   }
 
-  function partyLogo(party: string): any {
-    let logo = "";
-    let border = false;
-    switch (party) {
-      case "PL":
-        logo = "http://pl22.com.br/LOGO/MARCA_FINAL_PL.png";
-        border = true;
-        break;
-      case "PSOL":
-        logo =
-          "https://psol50sp.org.br/wp-content/uploads/2019/12/Logo_PSOL-SP-13.png";
-        border = false;
-        break;
-      case "DEM":
-        logo =
-          "https://logodownload.org/wp-content/uploads/2017/03/dem-democratas-logo-partido-7.png";
-        border = true;
-        break;
-      case "PSD":
-        logo = "http://www.psd-ba.org.br/imagens/psd-logo-manual-04.svg";
-        border = false;
-        break;
-      case "PSDB":
-        logo =
-          "https://www.psdb.org.br/wp-content/themes/psdb-2017/dist/images/logo-nova.png";
-        border = false;
-        break;
-      case "PT":
-        logo =
-          "https://pt.org.br/wp-content/themes/pt_2016/assets/images/ico-news-pt.png";
-        border = false;
-        break;
-      case "PSL":
-        logo =
-          "https://seeklogo.com/images/P/psl-17-logo-E611BA820A-seeklogo.com.png";
-        border = true;
-        break;
-      case "PV":
-        logo =
-          "https://pv.org.br/wp-content/uploads/2021/07/logo-vertical-destaque.png";
-        border = false;
-        break;
-      case "MDB":
-        logo =
-          "https://logodownload.org/wp-content/uploads/2018/04/mdb-logo-partido-5.png";
-        border = true;
-        break;
-      case "NOVO":
-        logo =
-          "https://a2.vnda.com.br/novo/2020/08/13/17_8_0_058_23_8_9_957_Novo30_AOC.svg";
-        border = false;
-        break;
-      case "PSC":
-        logo =
-          "https://psc.org.br/wp-content/themes/psc/dist/images/logo20.png";
-        border = false;
-        break;
-      case "PP":
-        logo =
-          "https://progressistas.org.br/website2020/wp-content/uploads/2020/12/logo.png";
-        border = false;
-        break;
-      case "PROS":
-        logo =
-          "https://pros.org.br/wp-content/uploads/2021/02/pros-partido-republicano-da-ordem-social.png";
-        border = false;
-        break;
-      case "PCdoB":
-        logo =
-          "http://www.isauralemos.com.br/wp-content/uploads/2012/04/logo-pcdob.jpg";
-        border = false;
-        break;
-      case "REDE":
-        logo =
-          "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Logomarca_da_Rede_Sustentabilidade_%28REDE%29%2C_do_Brasil.png/576px-Logomarca_da_Rede_Sustentabilidade_%28REDE%29%2C_do_Brasil.png";
-        border = true;
-        break;
-      case "REPUBLICANOS":
-        logo =
-          "https://republicanos10.org.br/wp-content/uploads/2019/08/AF_Logo_Republicanos10_CMYK.png";
-        border = true;
-        break;
-      case "PATRIOTA":
-        logo =
-          "https://patriota51.org.br/wp-content/uploads/2021/07/patriotasp-400x88-1.png";
-        border = true;
-        break;
-      case "PATRI":
-        logo =
-          "https://patriota51.org.br/wp-content/uploads/2021/07/patriotasp-400x88-1.png";
-        border = true;
-        break;
-      case "PSB":
-        logo =
-          "https://www.psb40.org.br/cms/wp-content/themes/psb40/assets/images/logo-footer.png";
-        border = false;
-        break;
-      case "PODE":
-        logo =
-          "https://www.podemos.org.br/wp-content/uploads/2020/11/logo-podemos1.png";
-        border = true;
-        break;
-      case "AVANTE":
-        logo =
-          "https://avante70.org.br/wp-content/themes/avante/assets/images/logo-sticky.png";
-        border = false;
-        break;
-      case "SOLIDARIEDADE":
-        logo = "https://www.solidariedade.org.br/media/2021/05/logo.svg";
-        border = true;
-        break;
-      case "PDT":
-        logo =
-          "https://www.pdt.org.br/wp-content/uploads/2016/10/logo-vert-medio.png";
-        border = true;
-        break;
-      case "PTB":
-        logo =
-          "https://ptb.org.br/wp-content/themes/ptb/v4/img/logo1-white-2.png";
-        border = false;
-        break;
-      case "CIDADANIA":
-        logo =
-          "https://cidadania23.org.br/wp-content/uploads/2021/05/logo-retina-primary2-1.png";
-        border = true;
-        break;
-
-      default:
-        break;
+  function partyLogo(party: string) {
+    debugger;
+    if (party === "") {
+      return { logo: "", border: false };
     }
-    return { logo: logo, border: border };
+
+    const partyLogo = partyLogoDictionary[party];
+    return { logo: partyLogo.url, border: partyLogo.border };
   }
 
   function getDeputyInformation(type: string): string {
