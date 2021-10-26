@@ -29,6 +29,12 @@ import { PoliticianRadar } from "./components/PoliticianRadar";
 import axios from "axios";
 import { Coordinate } from "./interfaces/Coordinate";
 import { partyLogoDictionary } from "./data/partyLogoDictionary";
+import { Legislature } from "./interfaces/Legislature";
+import { Expense } from "./interfaces/Expense";
+import { Speech } from "./interfaces/Speech";
+import { Attendance } from "./interfaces/Attendance";
+import { Proposition } from "./interfaces/Proposition";
+import { getCoordinateData } from "./services/CoordinateService";
 
 const cheerio = require("cheerio");
 
@@ -72,168 +78,6 @@ function App() {
 
     getData();
   }, []);
-
-  interface Proposition {
-    propositions: [
-      {
-        name: string;
-        link: string;
-      }
-    ];
-    total: number;
-  }
-
-  interface Legislature {
-    list: [lg: string];
-    count: number;
-  }
-
-  interface Speech {
-    types: any;
-    count: number;
-  }
-
-  interface ParliamentaryExpenseList {
-    year: string;
-    month: string;
-    type: string;
-    documentCode: string;
-    documentType: string;
-    documentCodeType: string;
-    date: string;
-    documentNumber: string;
-    documentValue: number;
-    documentUrl: string;
-    providerName: string;
-    providerRegister: string;
-    netValue: number;
-    value: number;
-    refund: number;
-    partCode: string;
-    quota: string;
-  }
-
-  interface Expense {
-    cabinetExpense: number;
-    cabinetBudget: number;
-    parliamentaryQuotaExpense: number;
-    parliamentaryQuotaBudget: number;
-    parliamentaryExpenseListDescription: ParliamentaryExpenseList[];
-    range: number;
-  }
-
-  interface Attendance {
-    committee: {
-      attendance: number;
-      justified: number;
-      miss: number;
-    };
-    plenary: {
-      attendance: number;
-      miss: number;
-      deliberativedSessions: number;
-      dSAttendance: number;
-      dSJustified: number;
-      dSMiss: number;
-    };
-    range: number;
-  }
-
-  function getData(): Coordinate[] {
-    var list: Coordinate[] = [];
-    list.push({
-      name: "Legislaturas",
-      star: legislatures?.count == null ? 0 : legislatures.count * 20,
-    });
-    list.push({
-      name: "Despesas",
-      star:
-        ((expenses?.parliamentaryQuotaExpense == null &&
-        expenses?.parliamentaryQuotaBudget == null
-          ? 0
-          : parseInt(
-              (
-                100 -
-                (expenses.parliamentaryQuotaExpense /
-                  expenses.parliamentaryQuotaBudget) *
-                  100
-              ).toFixed(2)
-            ) < 0
-          ? 0
-          : parseInt(
-              (
-                100 -
-                (expenses.parliamentaryQuotaExpense /
-                  expenses.parliamentaryQuotaBudget) *
-                  100
-              ).toFixed(2)
-            )) +
-          (expenses?.cabinetExpense == null && expenses?.cabinetBudget == null
-            ? 0
-            : parseInt(
-                (
-                  100 -
-                  (expenses.cabinetExpense / expenses.cabinetBudget) * 100
-                ).toFixed(2)
-              ) < 0
-            ? 0
-            : parseInt(
-                (
-                  100 -
-                  (expenses.cabinetExpense / expenses.cabinetBudget) * 100
-                ).toFixed(2)
-              ))) /
-        2,
-    });
-    list.push({
-      name: "Discursos",
-      star: speechs?.count == null ? 0 : speechs.count,
-    });
-    list.push({ name: "Votações", star: 100 });
-    list.push({
-      name: "Presenças",
-      star:
-        attendances?.committee.attendance == null &&
-        attendances?.committee.miss == null &&
-        (attendances?.range == null || attendances?.range == 0) &&
-        attendances?.plenary.dSAttendance == null &&
-        attendances?.plenary.dSJustified == null &&
-        attendances?.plenary.dSMiss == null &&
-        attendances?.plenary.deliberativedSessions == null &&
-        (attendances?.range == null || attendances?.range == 0)
-          ? 0
-          : (Math.round(
-              ((attendances.committee.attendance +
-                attendances.committee.justified -
-                attendances.committee.miss) /
-                (attendances.committee.attendance +
-                  attendances.committee.justified +
-                  attendances.committee.miss) /
-                attendances.range) *
-                100
-            ) +
-              Math.round(
-                ((attendances.plenary.dSAttendance +
-                  attendances.plenary.dSJustified -
-                  attendances.plenary.dSMiss) /
-                  attendances.plenary.deliberativedSessions /
-                  attendances.range) *
-                  100
-              )) /
-            2,
-    });
-    list.push({
-      name: "Leis Aprovadas",
-      star: parseInt(
-        (
-          (+(authorships?.total == null ? 0 : authorships.total) +
-            +(reports?.total == null ? 0 : reports.total)) /
-          (legislatures?.count == null ? 1 : legislatures.count)
-        ).toFixed(2)
-      ),
-    });
-    return list;
-  }
 
   function PoliticianModal(props: any) {
     console.log("dados");
@@ -372,7 +216,16 @@ function App() {
               <Col xs={12} md={12}>
                 <h4 className="wc">Gráfico</h4>
                 <br />
-                <PoliticianRadar data={getData()} />
+                <PoliticianRadar
+                  data={getCoordinateData(
+                    legislatures,
+                    expenses,
+                    speechs,
+                    attendances,
+                    authorships,
+                    reports
+                  )}
+                />
               </Col>
             </Row>
             <br />
