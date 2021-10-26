@@ -2,8 +2,6 @@ import React from "react";
 import { useState, useEffect } from "react";
 import "./App.css";
 
-//import PolitianServiceData from "./components/functions/politian.service";
-
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import Button from "react-bootstrap/Button";
@@ -21,29 +19,24 @@ import Modal from "react-bootstrap/Modal";
 
 import Table from "react-bootstrap/Table";
 
-import PoliticianGallery from "./components/PoliticianGallery/index";
-
-import Deputy from "./components/functions/deputy";
-import DeputyComplete from "./components/functions/deputyComplete";
-import DeputyParty from "./components/functions/deputyParty";
-import DeputyProfession from "./components/functions/deputyProfession";
-import DeputyOccupation from "./components/functions/deputyOccupation";
+import { Deputy, DeputyResponse } from "./interfaces/Deputy";
+import DeputyComplete from "./interfaces/DeputyComplete";
+import DeputyParty from "./interfaces/DeputyParty";
+import DeputyProfession from "./interfaces/DeputyProfession";
+import DeputyOccupation from "./interfaces/DeputyOccupation";
 import { PoliticianRadar } from "./components/PoliticianRadar";
 
-import { Radar } from "@ant-design/charts";
-
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import { Coordinate } from "./interfaces/Coordinate";
 import { partyLogoDictionary } from "./data/partyLogoDictionary";
 
 const cheerio = require("cheerio");
 
-export async function setLegislature(id: number) {
+export function setLegislature(id: number) {
   const url =
     "https://totalcors.herokuapp.com/https://www.camara.leg.br/deputados/" +
     id +
     "/biografia";
-  //const legilastures = await axios.get<>(url);
 }
 
 function App() {
@@ -70,13 +63,14 @@ function App() {
   const [reports, setReports] = useState<Proposition>();
 
   useEffect(() => {
-    axios
-      .get<Deputy[]>(
-        "https://totalcors.herokuapp.com/https://dadosabertos.camara.leg.br/api/v2/deputados?ordem=ASC&ordenarPor=nome"
-      )
-      .then((response: AxiosResponse) => {
-        setDeputiesData(response.data.dados);
-      });
+    const getData = async () => {
+      const response = await axios.get<DeputyResponse>(
+        "https://dadosabertos.camara.leg.br/api/v2/deputados?ordem=ASC&ordenarPor=nome"
+      );
+      setDeputiesData(response.data.dados);
+    };
+
+    getData();
   }, []);
 
   interface Proposition {
