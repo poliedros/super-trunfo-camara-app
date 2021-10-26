@@ -29,6 +29,8 @@ import { PoliticianRadar } from "./components/PoliticianRadar";
 import axios from "axios";
 import { Coordinate } from "./interfaces/Coordinate";
 import { partyLogoDictionary } from "./data/partyLogoDictionary";
+import { professionIconDictionary } from "./data/professionIconDictionary";
+import { parliamentaryQuotaBudgetDictionary } from "./data/parliamentaryQuotaBudgetDictionary";
 import { Legislature } from "./interfaces/Legislature";
 import { Expense } from "./interfaces/Expense";
 import { Speech } from "./interfaces/Speech";
@@ -657,7 +659,6 @@ function App() {
   }
 
   function partyLogo(party: string) {
-    debugger;
     if (party === "") {
       return { logo: "", border: false };
     }
@@ -772,7 +773,7 @@ function App() {
                 height: "48px",
               }}
             >
-              <Image src={getProfessionIcon(profession.titulo)} />
+              <Image src = { professionIconDictionary[profession.titulo].url } />
               <h6>&nbsp;{profession.titulo}</h6>
             </div>
             <h6 className="">{nomarlizeDate(profession.dataHora, "ignore")}</h6>
@@ -979,85 +980,6 @@ function App() {
       );
   }
 
-  function getProfessionIcon(profession: string): string {
-    switch (profession) {
-      case "Empresário":
-        return "https://d1b1fjiwh8olf2.cloudfront.net/icon/free/svg/1410046.svg?token=eyJhbGciOiJoczI1NiIsImtpZCI6ImRlZmF1bHQifQ__.eyJpc3MiOiJkMWIxZmppd2g4b2xmMi5jbG91ZGZyb250Lm5ldCIsImV4cCI6MTYzNTEyMDAwMCwicSI6bnVsbCwiaWF0IjoxNjM0ODYxMjU1fQ__.d4d127c5f6849d327d36ffcf96988fdc99ede0dcb5463a886695496afe174935";
-
-      case "Empresária":
-        return "https://d1b1fjiwh8olf2.cloudfront.net/icon/free/svg/1410046.svg?token=eyJhbGciOiJoczI1NiIsImtpZCI6ImRlZmF1bHQifQ__.eyJpc3MiOiJkMWIxZmppd2g4b2xmMi5jbG91ZGZyb250Lm5ldCIsImV4cCI6MTYzNTEyMDAwMCwicSI6bnVsbCwiaWF0IjoxNjM0ODYxMjU1fQ__.d4d127c5f6849d327d36ffcf96988fdc99ede0dcb5463a886695496afe174935";
-
-      case "Advogado":
-        return "";
-
-      case "Advogada":
-        return "";
-
-      case "Agropecuarista":
-        return "";
-
-      case "Médico":
-        return "https://d1b1fjiwh8olf2.cloudfront.net/icon/free/svg/1410038.svg?token=eyJhbGciOiJoczI1NiIsImtpZCI6ImRlZmF1bHQifQ__.eyJpc3MiOiJkMWIxZmppd2g4b2xmMi5jbG91ZGZyb250Lm5ldCIsImV4cCI6MTYzNTEyMDAwMCwicSI6bnVsbCwiaWF0IjoxNjM0ODYxNjE4fQ__.0187f14b075ad7d1a3cc1d65135f32370c2141fb580c6da76f96f8ebae1366d4";
-
-      case "Médica":
-        return "https://d1b1fjiwh8olf2.cloudfront.net/icon/free/svg/1410038.svg?token=eyJhbGciOiJoczI1NiIsImtpZCI6ImRlZmF1bHQifQ__.eyJpc3MiOiJkMWIxZmppd2g4b2xmMi5jbG91ZGZyb250Lm5ldCIsImV4cCI6MTYzNTEyMDAwMCwicSI6bnVsbCwiaWF0IjoxNjM0ODYxNjE4fQ__.0187f14b075ad7d1a3cc1d65135f32370c2141fb580c6da76f96f8ebae1366d4";
-
-      case "Professor":
-        return "https://d1b1fjiwh8olf2.cloudfront.net/icon/free/svg/1409981.svg?token=eyJhbGciOiJoczI1NiIsImtpZCI6ImRlZmF1bHQifQ__.eyJpc3MiOiJkMWIxZmppd2g4b2xmMi5jbG91ZGZyb250Lm5ldCIsImV4cCI6MTYzNTEyMDAwMCwicSI6bnVsbCwiaWF0IjoxNjM0ODYxNzQxfQ__.e23f7d922283f26f01bde8b2e3b9ba4e429b611b6156a9f7fd0ce60f0e10a135";
-
-      case "Professora":
-        return "https://d1b1fjiwh8olf2.cloudfront.net/icon/free/svg/1409980.svg?token=eyJhbGciOiJoczI1NiIsImtpZCI6ImRlZmF1bHQifQ__.eyJpc3MiOiJkMWIxZmppd2g4b2xmMi5jbG91ZGZyb250Lm5ldCIsImV4cCI6MTYzNTEyMDAwMCwicSI6bnVsbCwiaWF0IjoxNjM0ODYxNzQxfQ__.ba3bc668fba8677d34af6f57294b53caef56c249037722cbe46186c894a24689";
-
-      case "Servidor público":
-        return "";
-
-      case "Servidora pública":
-        return "";
-
-      case "Administrador":
-        return "";
-
-      case "Administradora":
-        return "";
-
-      case "Engenheiro":
-        return "https://d1b1fjiwh8olf2.cloudfront.net/icon/free/svg/1409975.svg?token=eyJhbGciOiJoczI1NiIsImtpZCI6ImRlZmF1bHQifQ__.eyJpc3MiOiJkMWIxZmppd2g4b2xmMi5jbG91ZGZyb250Lm5ldCIsImV4cCI6MTYzNTEyMDAwMCwicSI6bnVsbCwiaWF0IjoxNjM0ODYxODMwfQ__.ba53390971de16cc36ae27238ee03ad686c4da93113d83ab3db4c6b9c5b95b5d";
-
-      case "Engenheira":
-        return "https://d1b1fjiwh8olf2.cloudfront.net/icon/free/svg/1409975.svg?token=eyJhbGciOiJoczI1NiIsImtpZCI6ImRlZmF1bHQifQ__.eyJpc3MiOiJkMWIxZmppd2g4b2xmMi5jbG91ZGZyb250Lm5ldCIsImV4cCI6MTYzNTEyMDAwMCwicSI6bnVsbCwiaWF0IjoxNjM0ODYxODMwfQ__.ba53390971de16cc36ae27238ee03ad686c4da93113d83ab3db4c6b9c5b95b5d";
-
-      case "Policial":
-        return "https://d1b1fjiwh8olf2.cloudfront.net/icon/free/svg/1410003.svg?token=eyJhbGciOiJoczI1NiIsImtpZCI6ImRlZmF1bHQifQ__.eyJpc3MiOiJkMWIxZmppd2g4b2xmMi5jbG91ZGZyb250Lm5ldCIsImV4cCI6MTYzNTEyMDAwMCwicSI6bnVsbCwiaWF0IjoxNjM0ODYxOTE1fQ__.1d70b1c549b3cdb5012ab8ac104fb2ae3c9244964024fdd47f50192e758fdbe6";
-
-      case "Jornalista":
-        return "";
-
-      case "Pastor":
-        return "https://d1b1fjiwh8olf2.cloudfront.net/icon/free/svg/1410002.svg?token=eyJhbGciOiJoczI1NiIsImtpZCI6ImRlZmF1bHQifQ__.eyJpc3MiOiJkMWIxZmppd2g4b2xmMi5jbG91ZGZyb250Lm5ldCIsImV4cCI6MTYzNTEyMDAwMCwicSI6bnVsbCwiaWF0IjoxNjM0ODYxOTU1fQ__.df32bb02b84767ce0365fc09041214f6738928a877fa4a8be1c8c1794d2664b8";
-
-      case "Pastora":
-        return "https://d1b1fjiwh8olf2.cloudfront.net/icon/free/svg/1410002.svg?token=eyJhbGciOiJoczI1NiIsImtpZCI6ImRlZmF1bHQifQ__.eyJpc3MiOiJkMWIxZmppd2g4b2xmMi5jbG91ZGZyb250Lm5ldCIsImV4cCI6MTYzNTEyMDAwMCwicSI6bnVsbCwiaWF0IjoxNjM0ODYxOTU1fQ__.df32bb02b84767ce0365fc09041214f6738928a877fa4a8be1c8c1794d2664b8";
-
-      case "Economista":
-        return "";
-
-      case "Militar":
-        return "https://d1b1fjiwh8olf2.cloudfront.net/icon/free/svg/1410053.svg?token=eyJhbGciOiJoczI1NiIsImtpZCI6ImRlZmF1bHQifQ__.eyJpc3MiOiJkMWIxZmppd2g4b2xmMi5jbG91ZGZyb250Lm5ldCIsImV4cCI6MTYzNTEyMDAwMCwicSI6bnVsbCwiaWF0IjoxNjM0ODYxNDI1fQ__.f3258576e39c0af77973bb2c3ead6a5c81fdfdaf07f2fe98aff7c412834cbc83";
-
-      case "Bancário":
-        return "";
-
-      case "Bancária":
-        return "";
-
-      case "Estudante":
-        return "https://d1b1fjiwh8olf2.cloudfront.net/icon/free/svg/1409986.svg?token=eyJhbGciOiJoczI1NiIsImtpZCI6ImRlZmF1bHQifQ__.eyJpc3MiOiJkMWIxZmppd2g4b2xmMi5jbG91ZGZyb250Lm5ldCIsImV4cCI6MTYzNTEyMDAwMCwicSI6bnVsbCwiaWF0IjoxNjM0ODYyMDQxfQ__.8bf4471cbb30302f2e9dde192012218215adcc574dcd0352c988870ef88d80ea";
-
-      default:
-        return "";
-    }
-  }
-
   function setCurrentPolitician(urlPolitician: string, urlParty: string) {
     const getPolitician = () => {
       axios
@@ -1251,94 +1173,7 @@ function App() {
       deputyCompleteData?.dados.ultimoStatus.siglaUf == null
         ? ""
         : deputyCompleteData.dados.ultimoStatus.siglaUf;
-    var parliamentaryQuotaBudget;
-
-    switch (state) {
-      case "AC":
-        parliamentaryQuotaBudget = 44632.46 * 12 * years.length;
-        break;
-      case "AL":
-        parliamentaryQuotaBudget = 40944.1 * 12 * years.length;
-        break;
-      case "AM":
-        parliamentaryQuotaBudget = 43570.12 * 12 * years.length;
-        break;
-      case "AP":
-        parliamentaryQuotaBudget = 43374.78 * 12 * years.length;
-        break;
-      case "BA":
-        parliamentaryQuotaBudget = 39010.85 * 12 * years.length;
-        break;
-      case "CE":
-        parliamentaryQuotaBudget = 42451.77 * 12 * years.length;
-        break;
-      case "DF":
-        parliamentaryQuotaBudget = 30788.66 * 12 * years.length;
-        break;
-      case "ES":
-        parliamentaryQuotaBudget = 37423.91 * 12 * years.length;
-        break;
-      case "GO":
-        parliamentaryQuotaBudget = 35507.06 * 12 * years.length;
-        break;
-      case "MA":
-        parliamentaryQuotaBudget = 42151.69 * 12 * years.length;
-        break;
-      case "MG":
-        parliamentaryQuotaBudget = 36092.71 * 12 * years.length;
-        break;
-      case "MS":
-        parliamentaryQuotaBudget = 40542.84 * 12 * years.length;
-        break;
-      case "MT":
-        parliamentaryQuotaBudget = 39428.03 * 12 * years.length;
-        break;
-      case "PA":
-        parliamentaryQuotaBudget = 42227.45 * 12 * years.length;
-        break;
-      case "PB":
-        parliamentaryQuotaBudget = 42032.56 * 12 * years.length;
-        break;
-      case "PE":
-        parliamentaryQuotaBudget = 41676.8 * 12 * years.length;
-        break;
-      case "PI":
-        parliamentaryQuotaBudget = 40971.77 * 12 * years.length;
-        break;
-      case "PR":
-        parliamentaryQuotaBudget = 38871.86 * 12 * years.length;
-        break;
-      case "RJ":
-        parliamentaryQuotaBudget = 35759.97 * 12 * years.length;
-        break;
-      case "RN":
-        parliamentaryQuotaBudget = 42731.99 * 12 * years.length;
-        break;
-      case "RO":
-        parliamentaryQuotaBudget = 43672.49 * 12 * years.length;
-        break;
-      case "RR":
-        parliamentaryQuotaBudget = 45612.53 * 12 * years.length;
-        break;
-      case "RS":
-        parliamentaryQuotaBudget = 40875.9 * 12 * years.length;
-        break;
-      case "SC":
-        parliamentaryQuotaBudget = 39877.78 * 12 * years.length;
-        break;
-      case "SE":
-        parliamentaryQuotaBudget = 40139.26 * 12 * years.length;
-        break;
-      case "SP":
-        parliamentaryQuotaBudget = 37043.53 * 12 * years.length;
-        break;
-      case "TO":
-        parliamentaryQuotaBudget = 39503.61 * 12 * years.length;
-        break;
-
-      default:
-        break;
-    }
+    var parliamentaryQuotaBudget = parliamentaryQuotaBudgetDictionary[state].value * 12 * years.length;
 
     let expensesData: Expense = {} as Expense;
     expensesData.cabinetExpense = 0;
