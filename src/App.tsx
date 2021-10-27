@@ -1056,16 +1056,16 @@ function App() {
       .split(" ");
     for (let ind = 0; ind < words.length; ind++) {
       if (
-        words[ind] == "Da" ||
-        words[ind] == "Do" ||
-        words[ind] == "De" ||
-        words[ind] == "Di" ||
-        words[ind] == "Das" ||
-        words[ind] == "Dos" ||
-        words[ind] == "Van" ||
-        words[ind] == "Von" ||
-        words[ind] == "Del" ||
-        words[ind] == "E"
+        words[ind] === "Da" ||
+        words[ind] === "Do" ||
+        words[ind] === "De" ||
+        words[ind] === "Di" ||
+        words[ind] === "Das" ||
+        words[ind] === "Dos" ||
+        words[ind] === "Van" ||
+        words[ind] === "Von" ||
+        words[ind] === "Del" ||
+        words[ind] === "E"
       )
         words[ind] = words[ind].toLowerCase();
     }
@@ -1095,64 +1095,53 @@ function App() {
   }
 
   function setCurrentPoliticianCareer() {
-    const getProfession = () => {
-      axios
-        .get<DeputyProfession>(
-          "https://dadosabertos.camara.leg.br/api/v2/deputados/" +
-            deputyCompleteData?.dados.id +
-            "/profissoes"
-        )
-
-        .then((responseProfession) => {
-          setDeputyProfessionData(responseProfession.data);
-        });
+    const getProfession = async () => {
+      const responseProfession = await axios.get<DeputyProfession>(
+        "https://dadosabertos.camara.leg.br/api/v2/deputados/" +
+          deputyCompleteData?.dados.id +
+          "/profissoes"
+      );
+      setDeputyProfessionData(responseProfession.data);
     };
 
-    const getOccupation = () => {
-      axios
-        .get<DeputyOccupation>(
-          "https://dadosabertos.camara.leg.br/api/v2/deputados/" +
-            deputyCompleteData?.dados.id +
-            "/ocupacoes"
-        )
-
-        .then((responseOccupation) => {
-          setDeputyOccupationData(responseOccupation.data);
-        });
+    const getOccupation = async () => {
+      const responseOccupation = await axios.get<DeputyOccupation>(
+        "https://dadosabertos.camara.leg.br/api/v2/deputados/" +
+          deputyCompleteData?.dados.id +
+          "/ocupacoes"
+      );
+      setDeputyOccupationData(responseOccupation.data);
     };
 
     getProfession();
     getOccupation();
   }
 
-  function setLegislaturesData(id: number) {
+  async function setLegislaturesData(id: number) {
     let legislatureList: Legislature = {} as Legislature;
     legislatureList.list = [""];
     legislatureList.count = 0;
 
     legislatureList.list.pop();
 
-    axios
-      .get(
-        "https://totalcors.herokuapp.com/https://www.camara.leg.br/deputados/" +
-          id +
-          "/biografia"
-      )
-      .then((response) => {
-        const $ = cheerio.load(response.data);
+    const response = await axios.get(
+      "https://totalcors.herokuapp.com/https://www.camara.leg.br/deputados/" +
+        id +
+        "/biografia"
+    );
+    const $ = cheerio.load(response.data);
 
-        const urlElems = $("section > p > a");
+    const urlElems = $("section > p > a");
 
-        console.log("legisture");
-        console.log(urlElems);
+    console.log("legisture");
+    console.log(urlElems);
 
-        urlElems.each((ind: number, val: any) => {
-          if (urlElems.length / 2 > ind)
-            legislatureList.list.push(String($(val).text()).trim());
-        });
+    urlElems.each((ind: number, val: any) => {
+      if (urlElems.length / 2 > ind)
+        legislatureList.list.push(String($(val).text()).trim());
+    });
 
-        legislatureList.count = legislatureList.list.length;
-      });
+    legislatureList.count = legislatureList.list.length;
 
     setLegislatures(legislatureList);
   }
