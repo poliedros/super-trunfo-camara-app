@@ -773,7 +773,7 @@ function App() {
                 height: "48px",
               }}
             >
-              <Image src = { professionIconDictionary[profession.titulo].url } />
+              <Image src={professionIconDictionary[profession.titulo].url} />
               <h6>&nbsp;{profession.titulo}</h6>
             </div>
             <h6 className="">{nomarlizeDate(profession.dataHora, "ignore")}</h6>
@@ -981,22 +981,14 @@ function App() {
   }
 
   function setCurrentPolitician(urlPolitician: string, urlParty: string) {
-    const getPolitician = () => {
-      axios
-        .get<DeputyComplete>(urlPolitician)
-
-        .then((responsePolitician) => {
-          setDeputyCompleteData(responsePolitician.data);
-        });
+    const getPolitician = async () => {
+      const response = await axios.get<DeputyComplete>(urlPolitician);
+      setDeputyCompleteData(response.data);
     };
 
-    const getParty = () => {
-      axios
-        .get<DeputyParty>(urlParty)
-
-        .then((responseParty) => {
-          setDeputyPartyData(responseParty.data);
-        });
+    const getParty = async () => {
+      const response = await axios.get<DeputyParty>(urlParty);
+      setDeputyPartyData(response.data);
     };
 
     getPolitician();
@@ -1173,7 +1165,8 @@ function App() {
       deputyCompleteData?.dados.ultimoStatus.siglaUf == null
         ? ""
         : deputyCompleteData.dados.ultimoStatus.siglaUf;
-    var parliamentaryQuotaBudget = parliamentaryQuotaBudgetDictionary[state].value * 12 * years.length;
+    var parliamentaryQuotaBudget =
+      parliamentaryQuotaBudgetDictionary[state].value * 12 * years.length;
 
     let expensesData: Expense = {} as Expense;
     expensesData.cabinetExpense = 0;
