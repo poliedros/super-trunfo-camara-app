@@ -1129,6 +1129,7 @@ function App() {
         id +
         "/biografia"
     );
+
     const $ = cheerio.load(response.data);
 
     const urlElems = $("section > p > a");
@@ -1146,7 +1147,7 @@ function App() {
     setLegislatures(legislatureList);
   }
 
-  function setExpensesData(id: number, page: number) {
+  async function setExpensesData(id: number, page: number) {
     const years = ["2019"];
     const cabinetBudget = 111675.59 * 12 * years.length;
 
@@ -1166,132 +1167,118 @@ function App() {
     expensesData.parliamentaryExpenseListDescription = [];
     expensesData.range = years.length;
 
-    function paginationExpense(id: number, page: number, y: number) {
-      axios
-        .get(
-          "https://dadosabertos.camara.leg.br/api/v2/deputados/" +
-            id +
-            "/despesas?ano=" +
-            years[y] +
-            "&pagina=" +
-            page +
-            "&itens=1000&ordem=ASC&ordenarPor=mes"
-        )
-        .then((response) => {
-          const cabinetExpenses = response.data.dados;
+    async function paginationExpense(id: number, page: number, y: number) {
+      const response = await axios.get(
+        "https://dadosabertos.camara.leg.br/api/v2/deputados/" +
+          id +
+          "/despesas?ano=" +
+          years[y] +
+          "&pagina=" +
+          page +
+          "&itens=1000&ordem=ASC&ordenarPor=mes"
+      );
+      const cabinetExpenses = response.data.dados;
 
-          console.log("GABINETE");
-          console.log(cabinetExpenses);
+      console.log("GABINETE");
+      console.log(cabinetExpenses);
 
-          for (let a = 0; a < cabinetExpenses.length; a++) {
-            expensesData.parliamentaryExpenseListDescription.push({
-              year: cabinetExpenses[a].ano,
-              month: cabinetExpenses[a].mes,
-              type: cabinetExpenses[a].tipoDespesa,
-              documentCode: cabinetExpenses[a].codDocumento,
-              documentType: cabinetExpenses[a].tipoDocumento,
-              documentCodeType: cabinetExpenses[a].codTipoDocumento,
-              date: cabinetExpenses[a].dataDocumento,
-              documentNumber: cabinetExpenses[a].numDocumento,
-              documentValue: cabinetExpenses[a].valorDocumento,
-              documentUrl: cabinetExpenses[a].urlDocumento,
-              providerName: cabinetExpenses[a].nomeFornecedor,
-              providerRegister: cabinetExpenses[a].cnpjCpfFornecedor,
-              netValue: cabinetExpenses[a].valorLiquido,
-              value: cabinetExpenses[a].valorGlosa,
-              refund: cabinetExpenses[a].numRessarcimento,
-              partCode: cabinetExpenses[a].codLote,
-              quota: cabinetExpenses[a].parcela,
-            });
-            expensesData.parliamentaryQuotaExpense +=
-              cabinetExpenses[a].valorDocumento;
-          }
-
-          if (cabinetExpenses.length == 100) {
-            page++;
-            paginationExpense(id, page, y);
-          }
+      for (let a = 0; a < cabinetExpenses.length; a++) {
+        expensesData.parliamentaryExpenseListDescription.push({
+          year: cabinetExpenses[a].ano,
+          month: cabinetExpenses[a].mes,
+          type: cabinetExpenses[a].tipoDespesa,
+          documentCode: cabinetExpenses[a].codDocumento,
+          documentType: cabinetExpenses[a].tipoDocumento,
+          documentCodeType: cabinetExpenses[a].codTipoDocumento,
+          date: cabinetExpenses[a].dataDocumento,
+          documentNumber: cabinetExpenses[a].numDocumento,
+          documentValue: cabinetExpenses[a].valorDocumento,
+          documentUrl: cabinetExpenses[a].urlDocumento,
+          providerName: cabinetExpenses[a].nomeFornecedor,
+          providerRegister: cabinetExpenses[a].cnpjCpfFornecedor,
+          netValue: cabinetExpenses[a].valorLiquido,
+          value: cabinetExpenses[a].valorGlosa,
+          refund: cabinetExpenses[a].numRessarcimento,
+          partCode: cabinetExpenses[a].codLote,
+          quota: cabinetExpenses[a].parcela,
         });
+        expensesData.parliamentaryQuotaExpense +=
+          cabinetExpenses[a].valorDocumento;
+      }
+
+      if (cabinetExpenses.length === 100) {
+        page++;
+        await paginationExpense(id, page, y);
+      }
     }
 
     for (let y = 0; y < years.length; y++) {
-      paginationExpense(id, page, y);
+      await paginationExpense(id, page, y);
 
-      axios
-        .get(
-          "https://totalcors.herokuapp.com/https://www.camara.leg.br/deputados/" +
-            id +
-            "/verba-gabinete?ano=" +
-            years[y]
-        )
-        .then((response) => {
-          const $ = cheerio.load(response.data);
+      const response = await axios.get(
+        "https://totalcors.herokuapp.com/https://www.camara.leg.br/deputados/" +
+          id +
+          "/verba-gabinete?ano=" +
+          years[y]
+      );
+      const $ = cheerio.load(response.data);
 
-          const urlElems = $("table > tbody > tr");
+      const urlElems = $("table > tbody > tr");
 
-          var expensesList: string[] = [];
+      var expensesList: string[] = [];
 
-          urlElems.each((ind: number, val: string) => {
-            expensesList = expensesList.concat($(val).find("td").last().text());
-          });
+      urlElems.each((ind: number, val: string) => {
+        expensesList = expensesList.concat($(val).find("td").last().text());
+      });
 
-          var expensesLast: number[] = [];
+      var expensesLast: number[] = [];
 
-          for (let i = 0; i < expensesList.length; i++) {
-            if (expensesList[i] != "")
-              expensesLast.push(
-                parseFloat(expensesList[i].replace(".", "").replace(",", "."))
-              );
-          }
-
-          expensesData.cabinetExpense += expensesLast.reduce(
-            (a, b) => a + b,
-            0
+      for (let i = 0; i < expensesList.length; i++) {
+        if (expensesList[i] != "")
+          expensesLast.push(
+            parseFloat(expensesList[i].replace(".", "").replace(",", "."))
           );
-        });
+      }
+
+      expensesData.cabinetExpense += expensesLast.reduce((a, b) => a + b, 0);
     }
 
     setExpenses(expensesData);
   }
 
-  function setSpeechData(id: number, page: number) {
+  async function setSpeechData(id: number, page: number) {
     let speechsList: Speech = {} as Speech;
     speechsList.types = {};
     speechsList.count = 0;
 
-    function counting(id: number, page: number) {
-      axios
-        .get(
-          "https://dadosabertos.camara.leg.br/api/v2/deputados/" +
-            id +
-            "/discursos?idLegislatura=56&dataInicio=2019-01-01&dataFim=2020-12-31&ordenarPor=dataHoraInicio&ordem=ASC&itens=100&pagina=" +
-            page
-        )
-        .then((response) => {
-          const speechs = response.data.dados;
+    async function counting(id: number, page: number) {
+      const response = await axios.get(
+        "https://dadosabertos.camara.leg.br/api/v2/deputados/" +
+          id +
+          "/discursos?idLegislatura=56&dataInicio=2019-01-01&dataFim=2020-12-31&ordenarPor=dataHoraInicio&ordem=ASC&itens=100&pagina=" +
+          page
+      );
+      const speechs = response.data.dados;
 
-          for (var k = speechs.length - 1; k >= 0; k--)
-            if (!speechsList.types.hasOwnProperty(speechs[k].tipoDiscurso))
-              speechsList.types[speechs[k].tipoDiscurso] = 1;
-            else speechsList.types[speechs[k].tipoDiscurso]++;
+      for (var k = speechs.length - 1; k >= 0; k--)
+        if (!speechsList.types.hasOwnProperty(speechs[k].tipoDiscurso))
+          speechsList.types[speechs[k].tipoDiscurso] = 1;
+        else speechsList.types[speechs[k].tipoDiscurso]++;
 
-          speechsList.count += speechs.length;
+      speechsList.count += speechs.length;
 
-          if (speechs.length == 100) {
-            page++;
-            counting(id, page);
-          }
-        });
+      if (speechs.length === 100) {
+        page++;
+        await counting(id, page);
+      }
     }
 
-    counting(id, page);
+    await counting(id, page);
 
     setSpeechs(speechsList);
   }
 
-  function setVoting(id: number) {}
-
-  function setAttendanceData(id: number) {
+  async function setAttendanceData(id: number) {
     const years = ["2019"];
 
     let attendanceData: Attendance = {} as Attendance;
@@ -1312,83 +1299,69 @@ function App() {
     var plenaryAttendanceCalc: number[] = [];
 
     for (let j = 0; j < years.length; j++) {
-      axios
-        .get(
-          "https://totalcors.herokuapp.com/https://www.camara.leg.br/deputados/" +
-            id +
-            "/presenca-comissoes/" +
-            years[j]
-        )
-        .then((response) => {
-          const $ = cheerio.load(response.data);
+      const responseDeputy = await axios.get(
+        "https://totalcors.herokuapp.com/https://www.camara.leg.br/deputados/" +
+          id +
+          "/presenca-comissoes/" +
+          years[j]
+      );
+      const $ = cheerio.load(responseDeputy.data);
 
-          const urlElems = $("table > tbody > tr");
+      const urlElemsDeputy = $("table > tbody > tr");
 
-          urlElems.each((ind: number, val: string) => {
-            committeeAttendanceList = committeeAttendanceList.concat(
-              $(val)
-                .find("td")
-                .last()
-                .text()
-                .replace(/\s\s+/g, "")
-                .split(/(?=[A-Z])/)
-            );
-          });
+      urlElemsDeputy.each((ind: number, val: string) => {
+        committeeAttendanceList = committeeAttendanceList.concat(
+          $(val)
+            .find("td")
+            .last()
+            .text()
+            .replace(/\s\s+/g, "")
+            .split(/(?=[A-Z])/)
+        );
+      });
 
-          var cAttendance = 0;
-          var cJustified = 0;
-          var cMiss = 0;
+      var cAttendance = 0;
+      var cJustified = 0;
+      var cMiss = 0;
 
-          for (let i = 0; i < committeeAttendanceList.length; i++) {
-            if (committeeAttendanceList[i] == "Presença") cAttendance++;
-            if (committeeAttendanceList[i] == "Ausência justificada")
-              cJustified++;
-            if (committeeAttendanceList[i] == "Ausência não justificada")
-              cMiss++;
-          }
+      for (let i = 0; i < committeeAttendanceList.length; i++) {
+        if (committeeAttendanceList[i] == "Presença") cAttendance++;
+        if (committeeAttendanceList[i] == "Ausência justificada") cJustified++;
+        if (committeeAttendanceList[i] == "Ausência não justificada") cMiss++;
+      }
 
-          attendanceData.committee.attendance += cAttendance;
-          attendanceData.committee.justified += cJustified;
-          attendanceData.committee.miss += cMiss;
-        });
+      attendanceData.committee.attendance += cAttendance;
+      attendanceData.committee.justified += cJustified;
+      attendanceData.committee.miss += cMiss;
 
-      axios
-        .get(
-          "https://totalcors.herokuapp.com/https://www.camara.leg.br/deputados/" +
-            id +
-            "/presenca-plenario/" +
-            years[j]
-        )
-        .then((response) => {
-          const $ = cheerio.load(response.data);
+      const responsePresenca = await axios.get(
+        "https://totalcors.herokuapp.com/https://www.camara.leg.br/deputados/" +
+          id +
+          "/presenca-plenario/" +
+          years[j]
+      );
+      const $2 = cheerio.load(responsePresenca.data);
 
-          const urlElems = $("table:nth-of-type(2) > tbody > tr");
+      const urlElemsPresenca = $2("table:nth-of-type(2) > tbody > tr");
 
-          urlElems.each((ind: number, val: string) => {
-            plenaryAttendanceList = plenaryAttendanceList.concat(
-              $(val)
-                .find("td")
-                .last()
-                .prev()
-                .text()
-                .replace(/\s\s+/g, "")
-                .trim()
-            );
-          });
+      urlElemsPresenca.each((ind: number, val: string) => {
+        plenaryAttendanceList = plenaryAttendanceList.concat(
+          $(val).find("td").last().prev().text().replace(/\s\s+/g, "").trim()
+        );
 
-          for (let i = 0; i < plenaryAttendanceList.length; i++) {
-            if (plenaryAttendanceList[i] != "")
-              plenaryAttendanceCalc.push(parseInt(plenaryAttendanceList[i]));
-          }
+        for (let i = 0; i < plenaryAttendanceList.length; i++) {
+          if (plenaryAttendanceList[i] != "")
+            plenaryAttendanceCalc.push(parseInt(plenaryAttendanceList[i]));
+        }
 
-          attendanceData.plenary.attendance += plenaryAttendanceCalc[0];
-          attendanceData.plenary.miss += plenaryAttendanceCalc[1];
-          attendanceData.plenary.deliberativedSessions +=
-            plenaryAttendanceCalc[2];
-          attendanceData.plenary.dSAttendance += plenaryAttendanceCalc[3];
-          attendanceData.plenary.dSJustified += plenaryAttendanceCalc[4];
-          attendanceData.plenary.dSMiss += plenaryAttendanceCalc[5];
-        });
+        attendanceData.plenary.attendance += plenaryAttendanceCalc[0];
+        attendanceData.plenary.miss += plenaryAttendanceCalc[1];
+        attendanceData.plenary.deliberativedSessions +=
+          plenaryAttendanceCalc[2];
+        attendanceData.plenary.dSAttendance += plenaryAttendanceCalc[3];
+        attendanceData.plenary.dSJustified += plenaryAttendanceCalc[4];
+        attendanceData.plenary.dSMiss += plenaryAttendanceCalc[5];
+      });
     }
 
     attendanceData.range = years.length;
@@ -1408,100 +1381,95 @@ function App() {
 
     propositionList.propositions.pop();
 
-    const getPropositionsApproved = () => {
-      axios
-        .get(
-          "https://totalcors.herokuapp.com/https://www.camara.leg.br/internet/sileg/Prop_lista.asp?Autor=0&ideCadastro=" +
-            idPolitician +
-            "&Limite=N&tipoProp=2"
-        )
-        .then((response) => {
+    const getPropositionsApproved = async () => {
+      const response = await axios.get(
+        "https://totalcors.herokuapp.com/https://www.camara.leg.br/internet/sileg/Prop_lista.asp?Autor=0&ideCadastro=" +
+          idPolitician +
+          "&Limite=N&tipoProp=2"
+      );
+      const $ = cheerio.load(response.data);
+
+      if (response.headers["x-final-url"].includes("Prop_lista")) {
+        const urlElemsNumber = $("b");
+
+        const arrayNumber = urlElemsNumber.text().trim().split("\n");
+
+        var number;
+
+        for (let i = 0; i < arrayNumber.length; i++)
+          if (arrayNumber[i].includes("Foram encontrados"))
+            number = arrayNumber[i].match(/\b(\w+)\b/g)[2];
+
+        propositionList.total = number;
+
+        console.log(propositionList);
+
+        for (let index = 2; index < Math.ceil(number / 30) + 1; index++) {
+          const response = await axios.get(
+            "https://totalcors.herokuapp.com/https://www.camara.leg.br/internet/sileg/Prop_lista.asp?Pagina=" +
+              index +
+              "&Autor=0&ideCadastro=" +
+              idPolitician +
+              "&Limite=N&tipoProp=2"
+          );
           const $ = cheerio.load(response.data);
 
-          if (response.headers["x-final-url"].includes("Prop_lista")) {
-            const urlElemsNumber = $("b");
+          const urlElems2 = $("table > tbody > tr > td > a");
 
-            const arrayNumber = urlElemsNumber.text().trim().split("\n");
+          urlElems2.each((idx: number, val: any) => {
+            var obj = {
+              name: $(val).text(),
+              link: $(val).attr("href"),
+            };
+            console.log(obj);
+            propositionList.propositions.push(obj);
+          });
+        }
 
-            var number;
+        const urlElems = $("table > tbody > tr > td > a");
 
-            for (let i = 0; i < arrayNumber.length; i++)
-              if (arrayNumber[i].includes("Foram encontrados"))
-                number = arrayNumber[i].match(/\b(\w+)\b/g)[2];
-
-            propositionList.total = number;
-
-            console.log(propositionList);
-
-            for (let index = 2; index < Math.ceil(number / 30) + 1; index++)
-              axios
-                .get(
-                  "https://totalcors.herokuapp.com/https://www.camara.leg.br/internet/sileg/Prop_lista.asp?Pagina=" +
-                    index +
-                    "&Autor=0&ideCadastro=" +
-                    idPolitician +
-                    "&Limite=N&tipoProp=2"
-                )
-                .then((response) => {
-                  const $ = cheerio.load(response.data);
-
-                  const urlElems2 = $("table > tbody > tr > td > a");
-
-                  urlElems2.each((idx: number, val: any) => {
-                    var obj = {
-                      name: $(val).text(),
-                      link: $(val).attr("href"),
-                    };
-                    console.log(obj);
-                    propositionList.propositions.push(obj);
-                  });
-                });
-
-            const urlElems = $("table > tbody > tr > td > a");
-
-            urlElems.each((idx: number, val: any) => {
-              var obj = {
-                name: $(val).text(),
-                link: $(val).attr("href"),
-              };
-              console.log(obj);
-              propositionList.propositions.push(obj);
-            });
-
-            setAuthorships(propositionList);
-          } else {
-            //revisar
-            propositionList.total = 1;
-
-            const urlElems = $("h3");
-
-            const array: string[] = urlElems.text().split("\n");
-
-            array.forEach((element) => {
-              element.replace("Inteiro teor", "");
-              element.trim();
-            });
-
-            for (let i = 0; i < array.length; i++) {
-              if (i == 1) {
-                array[i] = array[i].replace("Inteiro teor", "");
-                var obj = {
-                  name: array[i].trim(),
-                  link: response.headers["x-final-url"],
-                };
-                propositionList.propositions.push(obj);
-              }
-            }
-
-            setAuthorships(propositionList);
-          }
+        urlElems.each((idx: number, val: any) => {
+          var obj = {
+            name: $(val).text(),
+            link: $(val).attr("href"),
+          };
+          console.log(obj);
+          propositionList.propositions.push(obj);
         });
+
+        setAuthorships(propositionList);
+      } else {
+        //revisar
+        propositionList.total = 1;
+
+        const urlElems = $("h3");
+
+        const array: string[] = urlElems.text().split("\n");
+
+        array.forEach((element) => {
+          element.replace("Inteiro teor", "");
+          element.trim();
+        });
+
+        for (let i = 0; i < array.length; i++) {
+          if (i === 1) {
+            array[i] = array[i].replace("Inteiro teor", "");
+            var obj = {
+              name: array[i].trim(),
+              link: response.headers["x-final-url"],
+            };
+            propositionList.propositions.push(obj);
+          }
+        }
+
+        setAuthorships(propositionList);
+      }
     };
 
     getPropositionsApproved();
   }
 
-  function setPropositionsReport(id: number) {
+  async function setPropositionsReport(id: number) {
     let propositionList: Proposition = {} as Proposition;
 
     propositionList.propositions = [
@@ -1513,97 +1481,92 @@ function App() {
 
     propositionList.propositions.pop();
 
-    const getPropositions = () => {
-      axios
-        .get(
-          "https://totalcors.herokuapp.com/https://www.camara.leg.br/internet/sileg/Prop_lista.asp?Relator=0&ideCadastroProp=" +
-            idPolitician +
-            "&Limite=N&tipoProp=3"
-        )
-        .then((response) => {
-          const $ = cheerio.load(response.data);
+    const getPropositions = async () => {
+      const response = await axios.get(
+        "https://totalcors.herokuapp.com/https://www.camara.leg.br/internet/sileg/Prop_lista.asp?Relator=0&ideCadastroProp=" +
+          idPolitician +
+          "&Limite=N&tipoProp=3"
+      );
+      const $ = cheerio.load(response.data);
 
-          if (response.headers["x-final-url"].includes("Prop_lista")) {
-            const urlElemsNumber = $("b");
+      if (response.headers["x-final-url"].includes("Prop_lista")) {
+        const urlElemsNumber = $("b");
 
-            const arrayNumber = urlElemsNumber.text().trim().split("\n");
+        const arrayNumber = urlElemsNumber.text().trim().split("\n");
 
-            var number;
+        var number;
 
-            for (let i = 0; i < arrayNumber.length; i++)
-              if (arrayNumber[i].includes("Foram encontrados"))
-                number = arrayNumber[i].match(/\b(\w+)\b/g)[2];
+        for (let i = 0; i < arrayNumber.length; i++)
+          if (arrayNumber[i].includes("Foram encontrados"))
+            number = arrayNumber[i].match(/\b(\w+)\b/g)[2];
 
-            propositionList.total = number;
+        propositionList.total = number;
 
-            console.log(propositionList);
+        console.log(propositionList);
 
-            for (let index = 2; index < Math.ceil(number / 30) + 1; index++)
-              axios
-                .get(
-                  "https://totalcors.herokuapp.com/https://www.camara.leg.br/internet/sileg/Prop_lista.asp?Pagina=" +
-                    index +
-                    "&Relator=0&ideCadastroProp=" +
-                    idPolitician +
-                    "&Limite=N&tipoProp=3"
-                )
-                .then((response) => {
-                  const $ = cheerio.load(response.data);
+        for (let index = 2; index < Math.ceil(number / 30) + 1; index++) {
+          const response2 = await axios.get(
+            "https://totalcors.herokuapp.com/https://www.camara.leg.br/internet/sileg/Prop_lista.asp?Pagina=" +
+              index +
+              "&Relator=0&ideCadastroProp=" +
+              idPolitician +
+              "&Limite=N&tipoProp=3"
+          );
+          const $ = cheerio.load(response2.data);
 
-                  const urlElems2 = $("table > tbody > tr > td > a");
+          const urlElems2 = $("table > tbody > tr > td > a");
 
-                  urlElems2.each((idx: number, val: any) => {
-                    var obj = {
-                      name: $(val).text(),
-                      link: $(val).attr("href"),
-                    };
-                    console.log(obj);
-                    propositionList.propositions.push(obj);
-                  });
-                });
+          urlElems2.each((idx: number, val: any) => {
+            var obj = {
+              name: $(val).text(),
+              link: $(val).attr("href"),
+            };
+            console.log(obj);
+            propositionList.propositions.push(obj);
+          });
+        }
 
-            const urlElems = $("table > tbody > tr > td > a");
+        const urlElems = $("table > tbody > tr > td > a");
 
-            urlElems.each((idx: number, val: any) => {
-              var obj = {
-                name: $(val).text(),
-                link: $(val).attr("href"),
-              };
-              console.log(obj);
-              propositionList.propositions.push(obj);
-            });
-
-            setReports(propositionList);
-          } else {
-            //revisar
-            propositionList.total = 1;
-
-            const urlElems = $("h3");
-
-            const array: string[] = urlElems.text().split("\n");
-
-            array.forEach((element) => {
-              element.replace("Inteiro teor", "");
-              element.trim();
-            });
-
-            for (let i = 0; i < array.length; i++) {
-              if (i == 1) {
-                array[i] = array[i].replace("Inteiro teor", "");
-                var obj = {
-                  name: array[i].trim(),
-                  link: response.headers["x-final-url"],
-                };
-                propositionList.propositions.push(obj);
-              }
-            }
-
-            setReports(propositionList);
-          }
+        urlElems.each((idx: number, val: any) => {
+          var obj = {
+            name: $(val).text(),
+            link: $(val).attr("href"),
+          };
+          console.log(obj);
+          propositionList.propositions.push(obj);
         });
+
+        setReports(propositionList);
+      } else {
+        //revisar
+        propositionList.total = 1;
+
+        const urlElems = $("h3");
+
+        const array: string[] = urlElems.text().split("\n");
+
+        array.forEach((element) => {
+          element.replace("Inteiro teor", "");
+          element.trim();
+        });
+
+        for (let i = 0; i < array.length; i++) {
+          if (i === 1) {
+            array[i] = array[i].replace("Inteiro teor", "");
+            var obj = {
+              name: array[i].trim(),
+              link: response.headers["x-final-url"],
+            };
+            propositionList.propositions.push(obj);
+          }
+        }
+
+        setReports(propositionList);
+      }
     };
 
-    getPropositions();
+    await getPropositions();
   }
 
   return (
