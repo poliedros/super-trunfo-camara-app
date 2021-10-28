@@ -1,23 +1,23 @@
 {
   "files": {
     "main.css": "/super-trunfo-camara-app/static/css/main.ffec8d54.chunk.css",
-    "main.js": "/super-trunfo-camara-app/static/js/main.293e7120.chunk.js",
-    "main.js.map": "/super-trunfo-camara-app/static/js/main.293e7120.chunk.js.map",
+    "main.js": "/super-trunfo-camara-app/static/js/main.aa937e7b.chunk.js",
+    "main.js.map": "/super-trunfo-camara-app/static/js/main.aa937e7b.chunk.js.map",
     "runtime-main.js": "/super-trunfo-camara-app/static/js/runtime-main.badaaf17.js",
     "runtime-main.js.map": "/super-trunfo-camara-app/static/js/runtime-main.badaaf17.js.map",
     "static/css/2.f2512455.chunk.css": "/super-trunfo-camara-app/static/css/2.f2512455.chunk.css",
-    "static/js/2.66ce80cd.chunk.js": "/super-trunfo-camara-app/static/js/2.66ce80cd.chunk.js",
-    "static/js/2.66ce80cd.chunk.js.map": "/super-trunfo-camara-app/static/js/2.66ce80cd.chunk.js.map",
+    "static/js/2.ecea6cad.chunk.js": "/super-trunfo-camara-app/static/js/2.ecea6cad.chunk.js",
+    "static/js/2.ecea6cad.chunk.js.map": "/super-trunfo-camara-app/static/js/2.ecea6cad.chunk.js.map",
     "index.html": "/super-trunfo-camara-app/index.html",
     "static/css/2.f2512455.chunk.css.map": "/super-trunfo-camara-app/static/css/2.f2512455.chunk.css.map",
     "static/css/main.ffec8d54.chunk.css.map": "/super-trunfo-camara-app/static/css/main.ffec8d54.chunk.css.map",
-    "static/js/2.66ce80cd.chunk.js.LICENSE.txt": "/super-trunfo-camara-app/static/js/2.66ce80cd.chunk.js.LICENSE.txt"
+    "static/js/2.ecea6cad.chunk.js.LICENSE.txt": "/super-trunfo-camara-app/static/js/2.ecea6cad.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.badaaf17.js",
     "static/css/2.f2512455.chunk.css",
-    "static/js/2.66ce80cd.chunk.js",
+    "static/js/2.ecea6cad.chunk.js",
     "static/css/main.ffec8d54.chunk.css",
-    "static/js/main.293e7120.chunk.js"
+    "static/js/main.aa937e7b.chunk.js"
   ]
 }
