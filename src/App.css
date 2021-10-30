@@ -1,5 +1,5 @@
 .modal-backdrop {
-  background-color: green;
+  background-color: gray;
 }
 
 .cards-container {
@@ -9,7 +9,7 @@
   flex-direction: row;
   background-color: white;
 
-  margin: 15vh 0vw 7vh 0vw;
+  margin: 0vh 0vw 7vh 0vw;
   border-radius: 2rem;
   padding: 5vh 1vw 5vh 1vw;
 }
@@ -79,3 +79,120 @@
 .bgTrans .accordion-button:not(.collapsed)::after {
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='white'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
 }
+
+/* AQUI soh a logo */
+
+@import url('https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@1&display=swap');
+
+.superTrunfo {
+    font-family: 'Reem Kufi', sans-serif;
+}
+
+.osPoliticos {
+    font-family: 'DM Serif Display', serif;
+    letter-spacing: 7px;
+}
+
+.half-color {
+	position:relative;
+	font-size:40px;
+	display:inline-block;
+ 	color:white;
+    
+}
+
+.half-color:before{
+	content: attr(attribute);
+	color:#303030;
+	position:absolute;
+	top:0;
+	left:0;
+	height:57%;
+	overflow:hidden;
+  text-shadow: 0px 0px 3px white;
+}
+
+.half-color2 {
+	position:relative;
+	font-size:40px;
+	display:inline-block;
+ 	color:#303030;
+    text-shadow: 0px 0px 3px white;
+}
+
+.half-color2:before{
+	content: attr(attribute);
+	color:white;
+	position:absolute;
+	bottom:25%;
+	left:0;
+	height:50%;
+	overflow:hidden;
+}
+
+.half-color3 {
+	padding:0px;
+	position:relative;
+	font-size:40px;
+	display:inline-block;
+ 	color:white;
+ 	z-index:1;
+}
+
+.half-color3:after{
+	content: attr(attribute);
+	color:#303030;
+  text-shadow: 0px 0px 3px white;
+	position:absolute;
+	top:0;
+	left:0;
+	width:72%;
+	overflow:hidden;
+	z-index:2;
+}
+
+.half-color3:before{
+	content: attr(attribute);
+	color:#303030;
+	position:absolute;
+	top:0;
+	left:0;
+	width:30%;
+	overflow:hidden;
+	z-index:3;
+}
+
+.half-color4 {
+	padding:0px;
+	position:relative;
+	font-size:40px;
+	display:inline-block;
+ 	color:#d9d9d9;
+ 	z-index:1;
+}
+
+.half-color4:after{
+	content: attr(attribute);
+	color:#303030;
+  text-shadow: 0px 0px 3px white;
+	position:absolute;
+	top:0;
+	left:0;
+	/*width:70%;*/
+	overflow:hidden;
+	z-index:2;
+}
+
+.half-color4:before{
+	content: attr(attribute);
+	color:white;
+	position:absolute;
+	top:0;
+	left:0;
+	width:40%;
+	overflow:hidden;
+	z-index:3;
+}
+
+/* --- */

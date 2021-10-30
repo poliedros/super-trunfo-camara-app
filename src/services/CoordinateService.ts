@@ -4,6 +4,9 @@ import { Legislature } from "../interfaces/Legislature";
 import { Speech } from "../interfaces/Speech";
 import { Attendance } from "../interfaces/Attendance";
 import { Proposition } from "../interfaces/Proposition";
+import DeputyComplete from "../interfaces/DeputyComplete";
+
+import { deputyExtraDataDictionary } from "../data/deputyExtraDataDictionary";
 
 export const getCoordinateData = (
   legislatures: Legislature | undefined,
@@ -11,7 +14,8 @@ export const getCoordinateData = (
   speechs: Speech | undefined,
   attendances: Attendance | undefined,
   authorships: Proposition | undefined,
-  reports: Proposition | undefined
+  reports: Proposition | undefined,
+  deputyCompleteData: DeputyComplete | undefined
 ) => {
   var list: Coordinate[] = [];
   list.push({
@@ -60,9 +64,9 @@ export const getCoordinateData = (
   });
   list.push({
     name: "Discursos",
-    star: speechs?.count == null ? 0 : speechs.count,
+    star: speechs?.count == null ? 0 : (speechs.count*100)/800,
   });
-  list.push({ name: "Votações", star: 100 });
+  list.push({ name: "Votações", star: (deputyCompleteData?.dados.id) ? (deputyExtraDataDictionary[deputyCompleteData.dados.id]?.voting != undefined) ? deputyExtraDataDictionary[deputyCompleteData.dados.id].voting : 0 : 0 });
   list.push({
     name: "Presenças",
     star:
@@ -77,20 +81,16 @@ export const getCoordinateData = (
         ? 0
         : (Math.round(
             ((attendances.committee.attendance +
-              attendances.committee.justified -
-              attendances.committee.miss) /
+              attendances.committee.justified) /
               (attendances.committee.attendance +
                 attendances.committee.justified +
-                attendances.committee.miss) /
-              attendances.range) *
+                attendances.committee.miss)) *
               100
           ) +
             Math.round(
               ((attendances.plenary.dSAttendance +
-                attendances.plenary.dSJustified -
-                attendances.plenary.dSMiss) /
-                attendances.plenary.deliberativedSessions /
-                attendances.range) *
+                attendances.plenary.dSJustified) /
+                attendances.plenary.deliberativedSessions) *
                 100
             )) /
           2,

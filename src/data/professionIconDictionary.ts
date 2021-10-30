@@ -75,4 +75,103 @@ export const professionIconDictionary: { [profession: string]: ProfessionIconPro
     Estudante: {
         url: "https://d1b1fjiwh8olf2.cloudfront.net/icon/free/svg/1409986.svg?token=eyJhbGciOiJoczI1NiIsImtpZCI6ImRlZmF1bHQifQ__.eyJpc3MiOiJkMWIxZmppd2g4b2xmMi5jbG91ZGZyb250Lm5ldCIsImV4cCI6MTYzNTEyMDAwMCwicSI6bnVsbCwiaWF0IjoxNjM0ODYyMDQxfQ__.8bf4471cbb30302f2e9dde192012218215adcc574dcd0352c988870ef88d80ea"
     },
+    Ator: {
+        url: ""
+    },
+    "Cientista política": {
+        url: ""
+    },
+    Farmacêutica: {
+        url: ""
+    },
+    Química: {
+        url: ""
+    },
+    "Auxiliar de enfermagem": {
+        url: ""
+    },
+    "Assistente social": {
+        url: ""
+    },
+    "Procuradora de justiça": {
+        url: ""
+    },
+    Escritora: {
+        url: ""
+    },
+    "Empregado público": {
+        url: ""
+    },
+    Enfermeira: {
+        url: ""
+    },
+    Comunicador: {
+        url: ""
+    },
+    Escritor: {
+        url: ""
+    },
+    Músico: {
+        url: ""
+    },
+    Consultor: {
+        url: ""
+    },
+    "Cientista político": {
+        url: ""
+    },
+    Jornaleiro: {
+        url: ""
+    },
+    Secretário: {
+        url: ""
+    },
+    "Profissional técnico": {
+        url: ""
+    },
+    Agricultor: {
+        url: ""
+    },
+    Designer: {
+        url: ""
+    },
+    "Gestor público": {
+        url: ""
+    },
+    Tradutor: {
+        url: ""
+    },
+    Desenhista: {
+        url: ""
+    },
+    Publicitário: {
+        url: ""
+    },
+    Arquiteta: {
+        url: ""
+    },
+    Teólogo: {
+        url: ""
+    },
+    Pescador: {
+        url: ""
+    },
+    Geólogo: {
+        url: ""
+    },
+    Extensionista: {
+        url: ""
+    },
+    Agrônomo: {
+        url: ""
+    },
+    Música: {
+        url: ""
+    },
+    Bibliotecária: {
+        url: ""
+    },
+    Bombeiro: {
+        url: ""
+    },
 };
