@@ -27,6 +27,9 @@ import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 
+import Spinner from "react-bootstrap/Spinner";
+import ProgressBar from "react-bootstrap/ProgressBar";
+
 import { useAccordionButton } from 'react-bootstrap/AccordionButton';
 //import { ContextAwareToggle } from 'react-bootstrap/AccordionButton';
 //const decoratedOnClick = useAccordionButton(eventKey: any, onClick: KeyboardEvent);
@@ -65,6 +68,7 @@ export function setLegislature(id: number) {
 function App() {
   const [modalShow, setModalShow] = useState(false);
   const [modalShow2, setModalShow2] = useState(false);
+  const [loaderShow, setLoaderShow] = useState(false);
 
   const [deputiesData, setDeputiesData] = useState<Deputy[]>([]);
   const [deputyCompleteData, setDeputyCompleteData] =
@@ -75,7 +79,8 @@ function App() {
   const [deputyOccupationData, setDeputyOccupationData] =
     useState<DeputyOccupation>();
 
-  const [urlPolitician, setUrlPolitician] = useState<String>();
+  const [urlPoliticianState, setUrlPolitician] = useState<string>();
+  const [urlParty, setUrlParty] = useState<string>();
   const [idPolitician, setIdPolitician] = useState<number>();
 
   const [legislatures, setLegislatures] = useState<Legislature>();
@@ -176,6 +181,58 @@ function App() {
 
         <Modal.Footer className="bg-dark">
           <Button variant="primary">Procurar</Button>
+        </Modal.Footer>
+      </Modal>
+    );
+  }
+
+  function LoaderModal(props: any) {
+    return (
+      <Modal
+        {...props}
+        size="lg"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+      >
+
+        <Modal.Header className="bg-dark wc">
+          <Modal.Title
+            id="contained-modal-title-vcenter"
+            className="cardTextLeft"
+          >
+            <Spinner animation="grow" size="sm" />{" "}&nbsp;O deputado está recolhendo os documentos{ }{" "}
+            {/*&nbsp;{" "}*/}
+            <span style={{ color: "gray" }}>
+              { } ·{" "}
+              { }
+            </span>
+          </Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body
+          style={{
+            backgroundImage: `linear-gradient(rgba(141, 153, 174, 0.1), rgba(0, 0, 0, 0.8)), url("https://images.unsplash.com/photo-1598882281180-da3d409fea7a?ixid=MnwyNjMxNDV8MHwxfGFsbHx8fHx8fHx8fDE2MzU3NDQzODU&ixlib=rb-1.2.1")`,
+            backgroundRepeat: "no-repeat",
+            backgroundPosition: "50% 50%",
+            backgroundSize: "cover",
+            height: "80vh"
+          }}
+          className="show-grid"
+        >
+          <Container className="txtCenter">
+            <Row className="middle">
+              <Col className="message" style={{ position: "absolute", bottom: "0", right: "0" }}>
+                O presidente da Câmara dos Deputados, Rodrigo Maia (DEM-RJ), foi surpreendido em junho ao receber em seu gabinete uma carta cujo conteúdo era: cocô. Isso mesmo. O envelope estava preenchido com folhas de papel higiênico usadas. Maia cobrou uma investigação da Polícia Legislativa sobre o caso.
+                <div style={{ height: "3vh" }}></div>
+              </Col>
+            </Row>
+          </Container>
+        </Modal.Body>
+
+        <Modal.Footer style={{ backgroundColor: "#212529", justifyContent: "center" }}>
+            {/*<Image onClick={props.onHide} style={{ width: "48px" }} src={""} />{' '}
+            <Image onClick={props.onHide} style={{ width: "48px" }} src={""} />*/}
+            <ProgressBar animated variant="sucess" now={40} style={{ padding: "10px" }} />
         </Modal.Footer>
       </Modal>
     );
@@ -1547,12 +1604,12 @@ function App() {
 
       if (cabinetExpenses.length === 100) {
         page++;
-        await paginationExpense(id, page, y);
+        paginationExpense(id, page, y);
       }
     }
 
     for (let y = 0; y < years.length; y++) {
-      await paginationExpense(id, page, y);
+      paginationExpense(id, page, y);
 
       const response = await axios.get(
         "https://totalcors.herokuapp.com/https://www.camara.leg.br/deputados/" +
@@ -1913,6 +1970,97 @@ function App() {
     await getPropositions();
   }
 
+  async function allRequests(/*politician: Deputy,*/ _callback: Function) {
+    /*const response = await axios.get(
+      "https://dadosabertos.camara.leg.br/api/v2/votacoes?dataInicio=2020-06-01&dataFim=2020-07-01&itens=1000&ordem=DESC&ordenarPor=dataHoraRegistro"
+    );*/
+
+    /*setIdPolitician(politician.id);
+    setUrlPolitician(politician.uri);
+    setCurrentPolitician(politician.uri, politician.uriPartido);
+    setCurrentPoliticianCareer();
+    setAuthorshipPropositions(politician.id);
+    setPropositionsReport(politician.id);
+    setLegislaturesData(politician.id);
+    setSpeechData(politician.id, 1);
+    setAttendanceData(politician.id);
+    setExpensesData(politician.id, 1);*/
+
+    //setIdPolitician(160575);
+    //setUrlPolitician("https://dadosabertos.camara.leg.br/api/v2/deputados/160575");
+    //await setCurrentPolitician(urlPoliticianState ? urlPoliticianState : "", urlParty ? urlParty : "");
+    //await setCurrentPoliticianCareer();
+    /*await setAuthorshipPropositions(160575);
+    await setPropositionsReport(160575);
+    await setLegislaturesData(160575);
+    await setSpeechData(160575, 1);
+    await setAttendanceData(160575);
+    await setExpensesData(160575, 1);*/
+    
+    setIdPolitician(160575);
+    setUrlPolitician("https://dadosabertos.camara.leg.br/api/v2/deputados/160575");
+    await setCurrentPolitician("https://dadosabertos.camara.leg.br/api/v2/deputados/160575", "https://dadosabertos.camara.leg.br/api/v2/partidos/36844");
+    //await setCurrentPoliticianCareer();
+    await setAuthorshipPropositions(160575);
+    await setPropositionsReport(160575);
+    await setLegislaturesData(160575);
+    await setSpeechData(160575, 1);
+    await setAttendanceData(160575);
+    await setExpensesData(160575, 1);
+
+    // --
+
+    const id = "160575";
+
+    /*for (let y = 0; y < 2; y++) {
+      //await paginationExpense(id, page, y);
+
+      const response = await axios.get(
+        "https://totalcors.herokuapp.com/https://www.camara.leg.br/deputados/" +
+          id +
+          "/verba-gabinete?ano=" +
+          ['2019', '2020']
+      );
+      const $ = cheerio.load(response.data);
+
+      const urlElems = $("table > tbody > tr");
+
+      var expensesList: string[] = [];
+
+      urlElems.each((ind: number, val: string) => {
+        expensesList = expensesList.concat($(val).find("td").last().text());
+      });
+
+      var expensesLast: number[] = [];
+
+      for (let i = 0; i < expensesList.length; i++) {
+        if (expensesList[i] != "")
+          expensesLast.push(
+            parseFloat(expensesList[i].replace(".", "").replace(",", "."))
+          );
+      }
+
+      //expensesData.cabinetExpense += expensesLast.reduce((a, b) => a + b, 0);
+    }*/
+
+    // --
+
+    //console.log(response);
+    _callback();
+  }
+
+  async function waitForUs(politician: Deputy) {
+    console.log("inicio");
+    //setIdPolitician(politician.id);
+    //setUrlPolitician(politician.uri);
+    //setUrlParty(politician.uriPartido);
+    setLoaderShow(true);
+    allRequests(() => { setLoaderShow(false); setModalShow(true); }); //(politician, () => {})
+    //allRequests(politician, () => {});
+    //setModalShow(true);
+    //allRequests(function (politician) { function () { setModalShow(true); } });
+  }
+
   return (
     <div style={{ backgroundColor: "black" }}>
     {/*<Navbar bg="dark" variant="dark">
@@ -1967,13 +2115,14 @@ function App() {
 
         {deputiesData
         /*.filter(politician => ((deputyExtraDataDictionary[politician.id]?.gender != undefined) ? deputyExtraDataDictionary[politician.id].gender : false))*/
-        /*.filter(politician => (politician.siglaPartido == "PSOL"))*/
-        .filter(politician => ((deputyExtraDataDictionary[politician.id]?.voting != undefined) ? deputyExtraDataDictionary[politician.id].voting < 101 && deputyExtraDataDictionary[politician.id].voting > 89 : false))
+        /*.filter(politician => (politician.siglaPartido == "PSL"))*/
+        /*.filter(politician => (politician.siglaUf == "MG"))*/
+        .filter(politician => ((deputyExtraDataDictionary[politician.id]?.voting != undefined) ? deputyExtraDataDictionary[politician.id].voting < 30 && deputyExtraDataDictionary[politician.id].voting >= 1 : false))
         .map((politician, idx) => (
           <div
             className="cardContainerCenter"
             onClick={ async () => {
-              setModalShow(true);
+              /*setModalShow(true);
 
               setIdPolitician(politician.id);
               setUrlPolitician(politician.uri);
@@ -1984,7 +2133,8 @@ function App() {
               setLegislaturesData(politician.id);
               setSpeechData(politician.id, 1);
               setAttendanceData(politician.id);
-              setExpensesData(politician.id, 1);
+              setExpensesData(politician.id, 1);*/
+              waitForUs(politician) 
             }}
           >
             <Image
@@ -2014,6 +2164,7 @@ function App() {
 
         <PoliticianModal show={modalShow} onHide={() => setModalShow(false)} />
         <SearchModal show={modalShow2} onHide={() => setModalShow2(false)} />
+        <LoaderModal show={loaderShow} onHide={() => setLoaderShow(false)} />
       </div>
     </div>
     

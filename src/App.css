@@ -91,7 +91,14 @@
 
 .osPoliticos {
     font-family: 'DM Serif Display', serif;
-    letter-spacing: 7px;
+    letter-spacing: 6px;
+}
+
+.message {
+    font-family: 'DM Serif Display', serif;
+	color: white;
+	text-align: right;
+	font-size: 1.5rem;
 }
 
 .half-color {
