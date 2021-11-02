@@ -23,14 +23,13 @@ import Form from "react-bootstrap/Form";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 //import RangeSlider from "react-bootstrap/RangeSlider";
 
-
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 
 import Spinner from "react-bootstrap/Spinner";
 import ProgressBar from "react-bootstrap/ProgressBar";
 
-import { useAccordionButton } from 'react-bootstrap/AccordionButton';
+import { useAccordionButton } from "react-bootstrap/AccordionButton";
 //import { ContextAwareToggle } from 'react-bootstrap/AccordionButton';
 //const decoratedOnClick = useAccordionButton(eventKey: any, onClick: KeyboardEvent);
 
@@ -110,14 +109,10 @@ function App() {
         aria-labelledby="contained-modal-title-vcenter"
         centered
       >
-
         <Modal.Body className="show-grid bg-dark">
           <Container>
-
             <Row className="middle">
-
               <Col xs={12} md={12}>
-
                 <Row className="mb-3">
                   <Form.Group as={Col} controlId="formGridEmail">
                     <Form.Floating className="mb-3">
@@ -131,7 +126,10 @@ function App() {
                   </Form.Group>
 
                   <Form.Group as={Col} controlId="formGridPassword">
-                    <FloatingLabel controlId="floatingSelectGrid" label="Partido">
+                    <FloatingLabel
+                      controlId="floatingSelectGrid"
+                      label="Partido"
+                    >
                       <Form.Select aria-label="Floating label select example">
                         <option>todos</option>
                         <option value="DEM">DEM</option>
@@ -166,16 +164,18 @@ function App() {
                     </Col>
                   </Form.Group>
 
-                  <Form.Group as={Col} controlId="formGridPassword" className="wc">
+                  <Form.Group
+                    as={Col}
+                    controlId="formGridPassword"
+                    className="wc"
+                  >
                     <Form.Label>Governismo</Form.Label>
-                    <Form.Range min="0" max="100" value="0" step="5"/>
+                    <Form.Range min="0" max="100" value="0" step="5" />
                     <Form.Range />
                   </Form.Group>
                 </Row>
-
               </Col>
             </Row>
-            
           </Container>
         </Modal.Body>
 
@@ -194,17 +194,15 @@ function App() {
         aria-labelledby="contained-modal-title-vcenter"
         centered
       >
-
         <Modal.Header className="bg-dark wc">
           <Modal.Title
             id="contained-modal-title-vcenter"
             className="cardTextLeft"
           >
-            <Spinner animation="grow" size="sm" />{" "}&nbsp;O deputado está recolhendo os documentos{ }{" "}
-            {/*&nbsp;{" "}*/}
+            <Spinner animation="grow" size="sm" /> &nbsp;O deputado está
+            recolhendo os documentos{} {/*&nbsp;{" "}*/}
             <span style={{ color: "gray" }}>
-              { } ·{" "}
-              { }
+              {} · {}
             </span>
           </Modal.Title>
         </Modal.Header>
@@ -215,24 +213,38 @@ function App() {
             backgroundRepeat: "no-repeat",
             backgroundPosition: "50% 50%",
             backgroundSize: "cover",
-            height: "80vh"
+            height: "80vh",
           }}
           className="show-grid"
         >
           <Container className="txtCenter">
             <Row className="middle">
-              <Col className="message" style={{ position: "absolute", bottom: "0", right: "0" }}>
-                O presidente da Câmara dos Deputados, Rodrigo Maia (DEM-RJ), foi surpreendido em junho ao receber em seu gabinete uma carta cujo conteúdo era: cocô. Isso mesmo. O envelope estava preenchido com folhas de papel higiênico usadas. Maia cobrou uma investigação da Polícia Legislativa sobre o caso.
+              <Col
+                className="message"
+                style={{ position: "absolute", bottom: "0", right: "0" }}
+              >
+                O presidente da Câmara dos Deputados, Rodrigo Maia (DEM-RJ), foi
+                surpreendido em junho ao receber em seu gabinete uma carta cujo
+                conteúdo era: cocô. Isso mesmo. O envelope estava preenchido com
+                folhas de papel higiênico usadas. Maia cobrou uma investigação
+                da Polícia Legislativa sobre o caso.
                 <div style={{ height: "3vh" }}></div>
               </Col>
             </Row>
           </Container>
         </Modal.Body>
 
-        <Modal.Footer style={{ backgroundColor: "#212529", justifyContent: "center" }}>
-            {/*<Image onClick={props.onHide} style={{ width: "48px" }} src={""} />{' '}
+        <Modal.Footer
+          style={{ backgroundColor: "#212529", justifyContent: "center" }}
+        >
+          {/*<Image onClick={props.onHide} style={{ width: "48px" }} src={""} />{' '}
             <Image onClick={props.onHide} style={{ width: "48px" }} src={""} />*/}
-            <ProgressBar animated variant="sucess" now={40} style={{ padding: "10px" }} />
+          <ProgressBar
+            animated
+            variant="sucess"
+            now={40}
+            style={{ padding: "10px" }}
+          />
         </Modal.Footer>
       </Modal>
     );
@@ -405,25 +417,25 @@ function App() {
                   </ListGroup.Item>
                   <ListGroup.Item className="bgTrans wc">
                     Despesas (
-                      {expenses?.parliamentaryQuotaExpense == null &&
-                      expenses?.parliamentaryQuotaBudget == null
-                        ? ""
-                        : (
-                            100 -
-                            (expenses.parliamentaryQuotaExpense /
-                              expenses.parliamentaryQuotaBudget) *
-                              100
-                          ).toFixed(2) + "%"}{" "}
-                      |{" "}
-                      {expenses?.cabinetExpense == null &&
-                      expenses?.cabinetBudget == null
-                        ? ""
-                        : (
-                            100 -
-                            (expenses.cabinetExpense / expenses.cabinetBudget) *
-                              100.00
-                          ).toFixed(2) + "%"}
-                      )
+                    {expenses?.parliamentaryQuotaExpense == null &&
+                    expenses?.parliamentaryQuotaBudget == null
+                      ? ""
+                      : (
+                          100 -
+                          (expenses.parliamentaryQuotaExpense /
+                            expenses.parliamentaryQuotaBudget) *
+                            100
+                        ).toFixed(2) + "%"}{" "}
+                    |{" "}
+                    {expenses?.cabinetExpense == null &&
+                    expenses?.cabinetBudget == null
+                      ? ""
+                      : (
+                          100 -
+                          (expenses.cabinetExpense / expenses.cabinetBudget) *
+                            100.0
+                        ).toFixed(2) + "%"}
+                    )
                     <span className="cardTextRight">
                       {(expenses?.parliamentaryQuotaExpense == null &&
                       expenses?.parliamentaryQuotaBudget == null
@@ -452,11 +464,29 @@ function App() {
                   <ListGroup.Item className="bgTrans wc">
                     Discursos
                     <span className="cardTextRight">
-                      {speechs?.count == null ? 0 : (speechs.count*100)/800}
+                      {speechs?.count == null ? 0 : (speechs.count * 100) / 800}
                     </span>
                   </ListGroup.Item>
                   <ListGroup.Item className="bgTrans wc">
-                    Votações ({ (deputyCompleteData?.dados.id) ? (deputyExtraDataDictionary[deputyCompleteData.dados.id]?.voting != undefined) ? deputyExtraDataDictionary[deputyCompleteData.dados.id].voting : 0 : 0 }%)<span className="cardTextRight">{ (deputyCompleteData?.dados.id) ? (deputyExtraDataDictionary[deputyCompleteData.dados.id]?.voting != undefined) ? deputyExtraDataDictionary[deputyCompleteData.dados.id].voting : 0 : 0 }</span>
+                    Votações (
+                    {deputyCompleteData?.dados.id
+                      ? deputyExtraDataDictionary[deputyCompleteData.dados.id]
+                          ?.voting != undefined
+                        ? deputyExtraDataDictionary[deputyCompleteData.dados.id]
+                            .voting
+                        : 0
+                      : 0}
+                    %)
+                    <span className="cardTextRight">
+                      {deputyCompleteData?.dados.id
+                        ? deputyExtraDataDictionary[deputyCompleteData.dados.id]
+                            ?.voting != undefined
+                          ? deputyExtraDataDictionary[
+                              deputyCompleteData.dados.id
+                            ].voting
+                          : 0
+                        : 0}
+                    </span>
                   </ListGroup.Item>
                   <ListGroup.Item className="bgTrans wc">
                     Presenças (
@@ -544,42 +574,73 @@ function App() {
                   <Accordion.Item eventKey="0">
                     <Accordion.Header>
                       Despesas (R$
-                        {expenses?.parliamentaryQuotaExpense == null
-                          ? ""
-                          : commaNotation(String(expenses.parliamentaryQuotaExpense.toFixed(2)))}{" "}
-                        + R$
-                        {expenses?.cabinetExpense == null
-                          ? ""
-                          : commaNotation(String(expenses.cabinetExpense.toFixed(2)))}{" "}
-                        = R$
-                          {
-                            commaNotation(String((+(expenses?.parliamentaryQuotaExpense == null
-                            ? 0
-                            : expenses.parliamentaryQuotaExpense) +
+                      {expenses?.parliamentaryQuotaExpense == null
+                        ? ""
+                        : commaNotation(
+                            String(
+                              expenses.parliamentaryQuotaExpense.toFixed(2)
+                            )
+                          )}{" "}
+                      + R$
+                      {expenses?.cabinetExpense == null
+                        ? ""
+                        : commaNotation(
+                            String(expenses.cabinetExpense.toFixed(2))
+                          )}{" "}
+                      = R$
+                      {commaNotation(
+                        String(
+                          (
+                            +(expenses?.parliamentaryQuotaExpense == null
+                              ? 0
+                              : expenses.parliamentaryQuotaExpense) +
                             +(expenses?.cabinetExpense == null
-                            ? 0
-                            : expenses.cabinetExpense)).toFixed(2)))
-                          }
+                              ? 0
+                              : expenses.cabinetExpense)
+                          ).toFixed(2)
                         )
+                      )}
+                      )
                     </Accordion.Header>
                     <Accordion.Body>
-                      <h5 style={{ textAlign: "left" }}>Maiores provedores de serviços</h5>
+                      <h5 style={{ textAlign: "left" }}>
+                        Maiores provedores de serviços
+                      </h5>
                       <Table responsive hover size="sm">
                         <thead>
                           <tr>
-                            <th style={{ textAlign: "right", paddingRight: "1vw" }}>Nome</th>
-                            <th style={{ textAlign: "left", paddingLeft: "1vw" }}>Valor</th>
-                            <th style={{ textAlign: "left", paddingLeft: "1vw" }}>Fornecedor</th>
+                            <th
+                              style={{
+                                textAlign: "right",
+                                paddingRight: "1vw",
+                              }}
+                            >
+                              Nome
+                            </th>
+                            <th
+                              style={{ textAlign: "left", paddingLeft: "1vw" }}
+                            >
+                              Valor
+                            </th>
+                            <th
+                              style={{ textAlign: "left", paddingLeft: "1vw" }}
+                            >
+                              Fornecedor
+                            </th>
                           </tr>
                         </thead>
                         <tbody>
-                          {
-                            topProviders((expenses?.parliamentaryExpenseListDescription) ? expenses.parliamentaryExpenseListDescription : [{
-                              type: "",
-                              providerName: "",
-                              documentValue: 0
-                            }] )
-                          }
+                          {topProviders(
+                            expenses?.parliamentaryExpenseListDescription
+                              ? expenses.parliamentaryExpenseListDescription
+                              : [
+                                  {
+                                    type: "",
+                                    providerName: "",
+                                    documentValue: 0,
+                                  },
+                                ]
+                          )}
                           {/*<tr>
                             <td style={{ textAlign: "right", paddingRight: "1vw" }}>{ expenses?.parliamentaryExpenseListDescription[0].documentNumber }</td>
                             <td style={{ textAlign: "left", paddingLeft: "1vw" }}>
@@ -643,13 +704,28 @@ function App() {
                       <Table responsive hover size="sm">
                         <thead>
                           <tr>
-                            <th style={{ textAlign: "right", paddingRight: "1vw" }}>Descrição</th>
-                            <th style={{ width: "10vw", textAlign: "left", paddingLeft: "1vw" }}>Valor</th>
+                            <th
+                              style={{
+                                textAlign: "right",
+                                paddingRight: "1vw",
+                              }}
+                            >
+                              Descrição
+                            </th>
+                            <th
+                              style={{
+                                width: "10vw",
+                                textAlign: "left",
+                                paddingLeft: "1vw",
+                              }}
+                            >
+                              Valor
+                            </th>
                           </tr>
                         </thead>
                         <tbody>
                           {
-                            showSpeech((speechs != undefined) ? speechs : {} )
+                            showSpeech(speechs != undefined ? speechs : {})
                             /*speechs.map((el, ix) => (
                               <tr>
                                 <td style={{ textAlign: "right", paddingRight: "1vw" }}>el.types</td>
@@ -728,7 +804,7 @@ function App() {
                               attendances.committee.justified) /
                               (attendances.committee.attendance +
                                 attendances.committee.justified +
-                                attendances.committee.miss) ) *
+                                attendances.committee.miss)) *
                               100
                           ) + "%"}{" "}
                       |{" "}
@@ -737,29 +813,59 @@ function App() {
                         attendances?.plenary.dSMiss == null &&
                         attendances?.plenary.deliberativedSessions == null &&
                         attendances?.range == null) ||
-                        attendances?.range == 0
+                      attendances?.range == 0
                         ? ""
                         : Math.round(
                             ((attendances.plenary.dSAttendance +
                               attendances.plenary.dSJustified) /
-                              attendances.plenary.deliberativedSessions ) *
+                              attendances.plenary.deliberativedSessions) *
                               100
                           ) + "%"}
                       )
                     </Accordion.Header>
                     <Accordion.Body>
-                      <h5 style={{ textAlign: "left" }}>Presença em Comissão</h5>
+                      <h5 style={{ textAlign: "left" }}>
+                        Presença em Comissão
+                      </h5>
                       <Table responsive hover size="sm">
                         <thead>
                           <tr>
-                            <th style={{ textAlign: "right", paddingRight: "1vw" }}>Descrição</th>
-                            <th style={{ width: "10vw", textAlign: "left", paddingLeft: "1vw" }}>Valor</th>
+                            <th
+                              style={{
+                                textAlign: "right",
+                                paddingRight: "1vw",
+                              }}
+                            >
+                              Descrição
+                            </th>
+                            <th
+                              style={{
+                                width: "10vw",
+                                textAlign: "left",
+                                paddingLeft: "1vw",
+                              }}
+                            >
+                              Valor
+                            </th>
                           </tr>
                         </thead>
                         <tbody>
                           <tr>
-                            <td style={{ textAlign: "right", paddingRight: "1vw" }}>Resultado Percentual</td>
-                            <td style={{ width: "10vw", textAlign: "left", paddingLeft: "1vw" }}>
+                            <td
+                              style={{
+                                textAlign: "right",
+                                paddingRight: "1vw",
+                              }}
+                            >
+                              Resultado Percentual
+                            </td>
+                            <td
+                              style={{
+                                width: "10vw",
+                                textAlign: "left",
+                                paddingLeft: "1vw",
+                              }}
+                            >
                               {(attendances?.committee.attendance == null &&
                                 attendances?.committee.miss == null &&
                                 attendances?.range == null) ||
@@ -770,30 +876,69 @@ function App() {
                                       attendances.committee.justified) /
                                       (attendances.committee.attendance +
                                         attendances.committee.justified +
-                                        attendances.committee.miss) ) *
+                                        attendances.committee.miss)) *
                                       100
                                   ) + "%"}
                             </td>
                           </tr>
                           <tr>
-                            <td style={{ textAlign: "right", paddingRight: "1vw" }}>Presença</td>
-                            <td style={{ width: "10vw", textAlign: "left", paddingLeft: "1vw" }}>
+                            <td
+                              style={{
+                                textAlign: "right",
+                                paddingRight: "1vw",
+                              }}
+                            >
+                              Presença
+                            </td>
+                            <td
+                              style={{
+                                width: "10vw",
+                                textAlign: "left",
+                                paddingLeft: "1vw",
+                              }}
+                            >
                               {attendances?.committee.attendance == null
                                 ? ""
                                 : attendances.committee.attendance}
                             </td>
                           </tr>
                           <tr>
-                            <td style={{ textAlign: "right", paddingRight: "1vw" }}>Ausências justificadas</td>
-                            <td style={{ width: "10vw", textAlign: "left", paddingLeft: "1vw" }}>
+                            <td
+                              style={{
+                                textAlign: "right",
+                                paddingRight: "1vw",
+                              }}
+                            >
+                              Ausências justificadas
+                            </td>
+                            <td
+                              style={{
+                                width: "10vw",
+                                textAlign: "left",
+                                paddingLeft: "1vw",
+                              }}
+                            >
                               {attendances?.committee.justified == null
                                 ? ""
                                 : attendances.committee.justified}
                             </td>
                           </tr>
                           <tr>
-                            <td style={{ textAlign: "right", paddingRight: "1vw" }}>Ausências não justificadas</td>
-                            <td style={{ width: "10vw", textAlign: "left", paddingLeft: "1vw" }}>
+                            <td
+                              style={{
+                                textAlign: "right",
+                                paddingRight: "1vw",
+                              }}
+                            >
+                              Ausências não justificadas
+                            </td>
+                            <td
+                              style={{
+                                width: "10vw",
+                                textAlign: "left",
+                                paddingLeft: "1vw",
+                              }}
+                            >
                               {attendances?.committee.miss == null
                                 ? ""
                                 : attendances.committee.miss}
@@ -801,19 +946,49 @@ function App() {
                           </tr>
                         </tbody>
                       </Table>
-                      <br/>
-                      <h5 style={{ textAlign: "left" }}>Presença em Plenário</h5>
+                      <br />
+                      <h5 style={{ textAlign: "left" }}>
+                        Presença em Plenário
+                      </h5>
                       <Table responsive hover size="sm">
                         <thead>
                           <tr>
-                            <th style={{ textAlign: "right", paddingRight: "1vw" }}>Descrição</th>
-                            <th style={{ width: "10vw", textAlign: "left", paddingLeft: "1vw" }}>Valor</th>
+                            <th
+                              style={{
+                                textAlign: "right",
+                                paddingRight: "1vw",
+                              }}
+                            >
+                              Descrição
+                            </th>
+                            <th
+                              style={{
+                                width: "10vw",
+                                textAlign: "left",
+                                paddingLeft: "1vw",
+                              }}
+                            >
+                              Valor
+                            </th>
                           </tr>
                         </thead>
                         <tbody>
                           <tr>
-                            <td style={{ textAlign: "right", paddingRight: "1vw" }}>Resultado Percentual</td>
-                            <td style={{ width: "10vw", textAlign: "left", paddingLeft: "1vw" }}>
+                            <td
+                              style={{
+                                textAlign: "right",
+                                paddingRight: "1vw",
+                              }}
+                            >
+                              Resultado Percentual
+                            </td>
+                            <td
+                              style={{
+                                width: "10vw",
+                                textAlign: "left",
+                                paddingLeft: "1vw",
+                              }}
+                            >
                               {(attendances?.plenary.dSAttendance == null &&
                                 attendances?.plenary.dSJustified == null &&
                                 attendances?.plenary.dSMiss == null &&
@@ -832,8 +1007,21 @@ function App() {
                             </td>
                           </tr>
                           <tr>
-                            <td style={{ textAlign: "right", paddingRight: "1vw" }}>Sessões deliberativas, realizadas em dias</td>
-                            <td style={{ width: "10vw", textAlign: "left", paddingLeft: "1vw" }}>
+                            <td
+                              style={{
+                                textAlign: "right",
+                                paddingRight: "1vw",
+                              }}
+                            >
+                              Sessões deliberativas, realizadas em dias
+                            </td>
+                            <td
+                              style={{
+                                width: "10vw",
+                                textAlign: "left",
+                                paddingLeft: "1vw",
+                              }}
+                            >
                               {attendances?.plenary.deliberativedSessions ==
                               null
                                 ? ""
@@ -841,28 +1029,63 @@ function App() {
                             </td>
                           </tr>
                           <tr>
-                            <td style={{ textAlign: "right", paddingRight: "1vw" }}>Sessões deliberativas, dias com presença</td>
-                            <td style={{ width: "10vw", textAlign: "left", paddingLeft: "1vw" }}>
+                            <td
+                              style={{
+                                textAlign: "right",
+                                paddingRight: "1vw",
+                              }}
+                            >
+                              Sessões deliberativas, dias com presença
+                            </td>
+                            <td
+                              style={{
+                                width: "10vw",
+                                textAlign: "left",
+                                paddingLeft: "1vw",
+                              }}
+                            >
                               {attendances?.plenary.dSAttendance == null
                                 ? ""
                                 : attendances.plenary.dSAttendance}
                             </td>
                           </tr>
                           <tr>
-                            <td style={{ textAlign: "right", paddingRight: "1vw" }}>
+                            <td
+                              style={{
+                                textAlign: "right",
+                                paddingRight: "1vw",
+                              }}
+                            >
                               Sessões deliberativas, ausências justificadas
                             </td>
-                            <td style={{ width: "10vw", textAlign: "left", paddingLeft: "1vw" }}>
+                            <td
+                              style={{
+                                width: "10vw",
+                                textAlign: "left",
+                                paddingLeft: "1vw",
+                              }}
+                            >
                               {attendances?.plenary.dSJustified == null
                                 ? ""
                                 : attendances.plenary.dSJustified}
                             </td>
                           </tr>
                           <tr>
-                            <td style={{ textAlign: "right", paddingRight: "1vw" }}>
+                            <td
+                              style={{
+                                textAlign: "right",
+                                paddingRight: "1vw",
+                              }}
+                            >
                               Sessões deliberativas, ausências não justificadas
                             </td>
-                            <td style={{ width: "10vw", textAlign: "left", paddingLeft: "1vw" }}>
+                            <td
+                              style={{
+                                width: "10vw",
+                                textAlign: "left",
+                                paddingLeft: "1vw",
+                              }}
+                            >
                               {attendances?.plenary.dSMiss == null
                                 ? ""
                                 : attendances.plenary.dSMiss}
@@ -873,22 +1096,44 @@ function App() {
                             <td></td>
                           </tr>
                           <tr>
-                            <td style={{ textAlign: "right", paddingRight: "1vw" }}>
+                            <td
+                              style={{
+                                textAlign: "right",
+                                paddingRight: "1vw",
+                              }}
+                            >
                               Sessões deliberativas com Ordem do Dia na Sessão
                               Legislativa
                             </td>
-                            <td style={{ width: "10vw", textAlign: "left", paddingLeft: "1vw" }}>
+                            <td
+                              style={{
+                                width: "10vw",
+                                textAlign: "left",
+                                paddingLeft: "1vw",
+                              }}
+                            >
                               {attendances?.plenary.attendance == null
                                 ? ""
                                 : attendances.plenary.attendance}
                             </td>
                           </tr>
                           <tr>
-                            <td style={{ textAlign: "right", paddingRight: "1vw" }}>
+                            <td
+                              style={{
+                                textAlign: "right",
+                                paddingRight: "1vw",
+                              }}
+                            >
                               Sessões deliberativas com Ordem do Dia, ausências
                               não justificadas
                             </td>
-                            <td style={{ width: "10vw", textAlign: "left", paddingLeft: "1vw" }}>
+                            <td
+                              style={{
+                                width: "10vw",
+                                textAlign: "left",
+                                paddingLeft: "1vw",
+                              }}
+                            >
                               {attendances?.plenary.miss == null
                                 ? ""
                                 : attendances.plenary.miss}
@@ -932,10 +1177,24 @@ function App() {
           </Container>
         </Modal.Body>
 
-        <Modal.Footer style={{ backgroundColor: "#212529", justifyContent: "center" }}>
+        <Modal.Footer
+          style={{ backgroundColor: "#212529", justifyContent: "center" }}
+        >
           {/*<Button onClick={props.onHide}>*/}
-            <Image onClick={props.onHide} style={{ width: "48px" }} src={"https://d1b1fjiwh8olf2.cloudfront.net/icon/free/svg/15939.svg?token=eyJhbGciOiJoczI1NiIsImtpZCI6ImRlZmF1bHQifQ__.eyJpc3MiOiJkMWIxZmppd2g4b2xmMi5jbG91ZGZyb250Lm5ldCIsImV4cCI6MTYzNTgxMTIwMCwicSI6bnVsbCwiaWF0IjoxNjM1NjAzNTAxfQ__.77e413861aa572d9d352d8073e6b58f9d7a4374cbe2034ce6aa693eaaaf7dba4"} />{' '}
-            <Image onClick={props.onHide} style={{ width: "48px" }} src={"https://d1b1fjiwh8olf2.cloudfront.net/icon/free/svg/16789.svg?token=eyJhbGciOiJoczI1NiIsImtpZCI6ImRlZmF1bHQifQ__.eyJpc3MiOiJkMWIxZmppd2g4b2xmMi5jbG91ZGZyb250Lm5ldCIsImV4cCI6MTYzNTgxMTIwMCwicSI6bnVsbCwiaWF0IjoxNjM1NjA1NDkzfQ__.9e4c55e2bd940ca9bfc2f0b06bef99da774d1809aa036c65b6dc5493eb8cc686"} />
+          <Image
+            onClick={props.onHide}
+            style={{ width: "48px" }}
+            src={
+              "https://d1b1fjiwh8olf2.cloudfront.net/icon/free/svg/15939.svg?token=eyJhbGciOiJoczI1NiIsImtpZCI6ImRlZmF1bHQifQ__.eyJpc3MiOiJkMWIxZmppd2g4b2xmMi5jbG91ZGZyb250Lm5ldCIsImV4cCI6MTYzNTgxMTIwMCwicSI6bnVsbCwiaWF0IjoxNjM1NjAzNTAxfQ__.77e413861aa572d9d352d8073e6b58f9d7a4374cbe2034ce6aa693eaaaf7dba4"
+            }
+          />{" "}
+          <Image
+            onClick={props.onHide}
+            style={{ width: "48px" }}
+            src={
+              "https://d1b1fjiwh8olf2.cloudfront.net/icon/free/svg/16789.svg?token=eyJhbGciOiJoczI1NiIsImtpZCI6ImRlZmF1bHQifQ__.eyJpc3MiOiJkMWIxZmppd2g4b2xmMi5jbG91ZGZyb250Lm5ldCIsImV4cCI6MTYzNTgxMTIwMCwicSI6bnVsbCwiaWF0IjoxNjM1NjA1NDkzfQ__.9e4c55e2bd940ca9bfc2f0b06bef99da774d1809aa036c65b6dc5493eb8cc686"
+            }
+          />
           {/*</Button>*/}
         </Modal.Footer>
       </Modal>
@@ -1057,7 +1316,9 @@ function App() {
                 height: "48px",
               }}
             >
-              <Image src={""/*professionIconDictionary[profession.titulo].url*/} />
+              <Image
+                src={"" /*professionIconDictionary[profession.titulo].url*/}
+              />
               <h6>&nbsp;{profession.titulo}</h6>
             </div>
             <h6 className="">{nomarlizeDate(profession.dataHora, "ignore")}</h6>
@@ -1400,59 +1661,78 @@ function App() {
   }*/
 
   function showSpeech(speechsList: any): any {
-    return respondJson2(speechsList.types).sort(function(a, b){
-      return b.value - a.value;
-    }).map((el, ix) => (
-      <tr>
-        <td style={{ textAlign: "right", paddingRight: "1vw" }}>{ (el.type.toLowerCase() == 'null') ? 'não identificatido' : el.type.toLowerCase() }</td>
-        <td style={{ width: "10vw", textAlign: "left", paddingLeft: "1vw" }}>{ el.value }
-        </td>
-      </tr>
-    ));
+    return respondJson2(speechsList.types)
+      .sort(function (a, b) {
+        return b.value - a.value;
+      })
+      .map((el, ix) => (
+        <tr>
+          <td style={{ textAlign: "right", paddingRight: "1vw" }}>
+            {el.type.toLowerCase() == "null"
+              ? "não identificatido"
+              : el.type.toLowerCase()}
+          </td>
+          <td style={{ width: "10vw", textAlign: "left", paddingLeft: "1vw" }}>
+            {el.value}
+          </td>
+        </tr>
+      ));
   }
 
-  function topProviders(list: any):any {
-    var result = [{
-      document: 0,
-      name: [""],
-      value: 0
-    }];
+  function topProviders(list: any): any {
+    var result = [
+      {
+        document: 0,
+        name: [""],
+        value: 0,
+      },
+    ];
     result.pop();
-    console.log("document")
-    let i
-    let finded = false
+    console.log("document");
+    let i;
+    let finded = false;
     for (i = 0; i < list.length; i++) {
-      finded = false
+      finded = false;
       for (let j = 0; j < result.length; j++) {
-        if(result[j].document == list[i].type) {
-          finded = true
-          console.log(list[i].type)
-          result[j].name.push((list[i]?.providerName != null) ? String(list[i].providerName) : "");
+        if (result[j].document == list[i].type) {
+          finded = true;
+          console.log(list[i].type);
+          result[j].name.push(
+            list[i]?.providerName != null ? String(list[i].providerName) : ""
+          );
           result[j].value += list[i].documentValue;
-        } 
+        }
       }
       if (!finded) {
-        result.push(
-          {
-            document: (list[i]?.type != null) ? list[i].type : "",
-            name: [(list[i]?.providerName != null) ? String(list[i].providerName) : ""],
-            value:  (list[i]?.documentValue != null) ? list[i].documentValue : 0
-          }
-        )
+        result.push({
+          document: list[i]?.type != null ? list[i].type : "",
+          name: [
+            list[i]?.providerName != null ? String(list[i].providerName) : "",
+          ],
+          value: list[i]?.documentValue != null ? list[i].documentValue : 0,
+        });
       }
     }
-    console.log("result")
-    console.log(list)
-    console.log(result)
-    return result.sort(function(a, b){
-      return b.value - a.value;
-    }).map((el, ix) => (
-      <tr>
-        <td style={{ textAlign: "right", paddingRight: "1vw" }}>{ el.document.toString().toLowerCase() }</td>
-        <td style={{ textAlign: "left", paddingLeft: "1vw" }}>R${ commaNotation(el.value.toFixed(2)) }</td>
-        <td style={{ textAlign: "left", paddingLeft: "1vw" }}>{/*<ContextAwareToggle eventKey="0">lista</ContextAwareToggle>*/}</td>
-      </tr>
-    ));
+    console.log("result");
+    console.log(list);
+    console.log(result);
+    return result
+      .sort(function (a, b) {
+        return b.value - a.value;
+      })
+      .map((el, ix) => (
+        <tr>
+          <td style={{ textAlign: "right", paddingRight: "1vw" }}>
+            {el.document.toString().toLowerCase()}
+          </td>
+          <td style={{ textAlign: "left", paddingLeft: "1vw" }}>
+            R${commaNotation(el.value.toFixed(2))}
+          </td>
+          <td style={{ textAlign: "left", paddingLeft: "1vw" }}>
+            {/*<ContextAwareToggle eventKey="0">lista</ContextAwareToggle>*/}
+          </td>
+        </tr>
+      ));
   }
 
   function respondJson2(json: any): any[] {
@@ -1464,7 +1744,7 @@ function App() {
     }
 
     for (let i = 0; i < keys.length; i++) {
-      result.push( { type: keys[i], value: json[keys[i]] } );
+      result.push({ type: keys[i], value: json[keys[i]] });
     }
 
     return result;
@@ -1487,14 +1767,19 @@ function App() {
   }
 
   function commaNotation(money: string): string {
-    return money.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,").replace(/,/g , "_").replace("." , ",").replace(/_/g , ".");
+    return money
+      .toString()
+      .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+      .replace(/,/g, "_")
+      .replace(".", ",")
+      .replace(/_/g, ".");
   }
 
-  async function setCurrentPoliticianCareer() {
+  async function setCurrentPoliticianCareer(id: number) {
     const getProfession = async () => {
       const responseProfession = await axios.get<DeputyProfession>(
         "https://dadosabertos.camara.leg.br/api/v2/deputados/" +
-          deputyCompleteData?.dados.id +
+          id +
           "/profissoes"
       );
       setDeputyProfessionData(responseProfession.data);
@@ -1503,7 +1788,7 @@ function App() {
     const getOccupation = async () => {
       const responseOccupation = await axios.get<DeputyOccupation>(
         "https://dadosabertos.camara.leg.br/api/v2/deputados/" +
-          deputyCompleteData?.dados.id +
+          id +
           "/ocupacoes"
       );
       setDeputyOccupationData(responseOccupation.data);
@@ -1543,14 +1828,11 @@ function App() {
     setLegislatures(legislatureList);
   }
 
-  async function setExpensesData(id: number, page: number) {
+  async function setExpensesData(id: number, page: number, politician: Deputy) {
     const years = ["2019", "2020"];
     const cabinetBudget = 111675.59 * 12 * years.length;
 
-    const state =
-      deputyCompleteData?.dados.ultimoStatus.siglaUf == null
-        ? ""
-        : deputyCompleteData.dados.ultimoStatus.siglaUf;
+    const state = politician?.siglaUf == null ? "" : politician.siglaUf;
     var parliamentaryQuotaBudget =
       parliamentaryQuotaBudgetDictionary[state].value * 12 * years.length;
 
@@ -1758,8 +2040,7 @@ function App() {
 
       attendanceData.plenary.attendance += plenaryAttendanceCalc[0];
       attendanceData.plenary.miss += plenaryAttendanceCalc[1];
-      attendanceData.plenary.deliberativedSessions +=
-        plenaryAttendanceCalc[2];
+      attendanceData.plenary.deliberativedSessions += plenaryAttendanceCalc[2];
       attendanceData.plenary.dSAttendance += plenaryAttendanceCalc[3];
       attendanceData.plenary.dSJustified += plenaryAttendanceCalc[4];
       attendanceData.plenary.dSMiss += plenaryAttendanceCalc[5];
@@ -1970,7 +2251,7 @@ function App() {
     await getPropositions();
   }
 
-  async function allRequests(/*politician: Deputy,*/ _callback: Function) {
+  async function allRequests(politician: Deputy, _callback: Function) {
     /*const response = await axios.get(
       "https://dadosabertos.camara.leg.br/api/v2/votacoes?dataInicio=2020-06-01&dataFim=2020-07-01&itens=1000&ordem=DESC&ordenarPor=dataHoraRegistro"
     );*/
@@ -1996,17 +2277,17 @@ function App() {
     await setSpeechData(160575, 1);
     await setAttendanceData(160575);
     await setExpensesData(160575, 1);*/
-    
-    setIdPolitician(160575);
-    setUrlPolitician("https://dadosabertos.camara.leg.br/api/v2/deputados/160575");
-    await setCurrentPolitician("https://dadosabertos.camara.leg.br/api/v2/deputados/160575", "https://dadosabertos.camara.leg.br/api/v2/partidos/36844");
-    //await setCurrentPoliticianCareer();
-    await setAuthorshipPropositions(160575);
-    await setPropositionsReport(160575);
-    await setLegislaturesData(160575);
-    await setSpeechData(160575, 1);
-    await setAttendanceData(160575);
-    await setExpensesData(160575, 1);
+
+    setIdPolitician(politician.id);
+    setUrlPolitician(politician.uri);
+    await setCurrentPolitician(politician.uri, politician.uriPartido);
+    await setCurrentPoliticianCareer(politician.id);
+    await setAuthorshipPropositions(politician.id);
+    await setPropositionsReport(politician.id);
+    await setLegislaturesData(politician.id);
+    await setSpeechData(politician.id, 1);
+    await setAttendanceData(politician.id);
+    await setExpensesData(politician.id, 1, politician);
 
     // --
 
@@ -2055,7 +2336,10 @@ function App() {
     //setUrlPolitician(politician.uri);
     //setUrlParty(politician.uriPartido);
     setLoaderShow(true);
-    allRequests(() => { setLoaderShow(false); setModalShow(true); }); //(politician, () => {})
+    allRequests(politician, () => {
+      setLoaderShow(false);
+      setModalShow(true);
+    }); //(politician, () => {})
     //allRequests(politician, () => {});
     //setModalShow(true);
     //allRequests(function (politician) { function () { setModalShow(true); } });
@@ -2063,7 +2347,7 @@ function App() {
 
   return (
     <div style={{ backgroundColor: "black" }}>
-    {/*<Navbar bg="dark" variant="dark">
+      {/*<Navbar bg="dark" variant="dark">
       <Container>
       <Navbar.Brand href="#home">Super-Trunfo · os Políticos</Navbar.Brand>
       <Nav className="me-auto">
@@ -2077,52 +2361,104 @@ function App() {
       </Container>
     </Navbar>*/}
 
-    <Navbar bg="dark" variant="dark" expand="lg" className="navTableSpace" style={{ paddingLeft: "3vw" }}>
-      <Navbar.Brand href="#">
+      <Navbar
+        bg="dark"
+        variant="dark"
+        expand="lg"
+        className="navTableSpace"
+        style={{ paddingLeft: "3vw" }}
+      >
+        <Navbar.Brand href="#">
+          <div style={{ marginBottom: "-15px" }}>
+            <p
+              className="superTrunfo half-color"
+              style={{ color: "white", fontSize: "40px" }}
+            >
+              {" "}
+              SUPER{" "}
+            </p>{" "}
+            <span
+              className="superTrunfo"
+              style={{ color: "white", fontSize: "40px" }}
+            >
+              TR
+            </span>
+            <span className="superTrunfo half-color" data-attribute="U">
+              U
+            </span>
+            <span className="superTrunfo half-color3" data-attribute="N">
+              N
+            </span>
+            <span
+              className="superTrunfo half-color4"
+              data-attribute="F"
+              style={{ color: "#d9d9d9", fontSize: "40px" }}
+            >
+              F
+            </span>
+            <span className="superTrunfo half-color2" data-attribute="O">
+              O
+            </span>
+          </div>
+          <h5
+            style={{
+              color: "white",
+              display: "flex",
+              justifyContent: "center",
+            }}
+            className="osPoliticos"
+          >
+            os Políticos
+          </h5>
+        </Navbar.Brand>
+        <Navbar.Toggle aria-controls="navbarScroll" />
+        <Navbar.Collapse id="navbarScroll">
+          <Nav
+            className="me-auto"
+            style={{ maxHeight: "100px", paddingLeft: "3vw" }}
+            navbarScroll
+          >
+            <Nav.Link href="#">Cartas</Nav.Link>
+            <Nav.Link href="#">Informações</Nav.Link>
+            <Nav.Link href="#">Desenvolvedores</Nav.Link>
+          </Nav>
+        </Navbar.Collapse>
+      </Navbar>
 
-        <div style={{ marginBottom: "-15px"}}>
-          <p className="superTrunfo half-color" style={{ color: "white", fontSize: "40px" }} > SUPER </p>
-          {' '}
-          <span className="superTrunfo" style={{ color: "white", fontSize: "40px" }}>TR</span>
-          <span className="superTrunfo half-color" data-attribute="U">U</span>
-          <span className="superTrunfo half-color3" data-attribute="N">N</span>
-          <span className="superTrunfo half-color4" data-attribute="F" style={{ color: "#d9d9d9", fontSize: "40px" }}>F</span>
-          <span className="superTrunfo half-color2" data-attribute="O">O</span>
-        </div>
-        <h5 style={{ color: "white", display: "flex", justifyContent: "center" }} className="osPoliticos" >os Políticos</h5>
+      <div className="mainBg">
+        <Image
+          style={{
+            width: "96px",
+            position: "sticky",
+            left: "calc(50vw - 48px)",
+            top: "calc(20vh - 48px)",
+            zIndex: 1020,
+          }}
+          onClick={() => {
+            setModalShow2(true);
+          }}
+          src={
+            "https://d1b1fjiwh8olf2.cloudfront.net/icon/free/svg/459980.svg?token=eyJhbGciOiJoczI1NiIsImtpZCI6ImRlZmF1bHQifQ__.eyJpc3MiOiJkMWIxZmppd2g4b2xmMi5jbG91ZGZyb250Lm5ldCIsImV4cCI6MTYzNTgxMTIwMCwicSI6bnVsbCwiaWF0IjoxNjM1NjEyODA3fQ__.d52f7b901cc75074197d5fc1f564b79a3202d3bcdfe26f9d463834b6983225ae"
+          }
+        />
+        <div className="cards-container">
+          {/*<PoliticianGallery />*/}
 
-      </Navbar.Brand>
-      <Navbar.Toggle aria-controls="navbarScroll" />
-      <Navbar.Collapse id="navbarScroll">
-        <Nav
-          className="me-auto"
-          style={{ maxHeight: '100px', paddingLeft: "3vw" }}
-          navbarScroll
-        >
-          <Nav.Link href="#">Cartas</Nav.Link>
-          <Nav.Link href="#">Informações</Nav.Link>
-          <Nav.Link href="#">Desenvolvedores</Nav.Link>
-        </Nav>
-      </Navbar.Collapse>
-    </Navbar>
-
-    <div className="mainBg">
-    <Image style={{ width: "96px", position: "sticky", left: "calc(50vw - 48px)", top: "calc(20vh - 48px)", zIndex: 1020 }}
-    onClick={() => { setModalShow2(true) }}
-    src={"https://d1b1fjiwh8olf2.cloudfront.net/icon/free/svg/459980.svg?token=eyJhbGciOiJoczI1NiIsImtpZCI6ImRlZmF1bHQifQ__.eyJpc3MiOiJkMWIxZmppd2g4b2xmMi5jbG91ZGZyb250Lm5ldCIsImV4cCI6MTYzNTgxMTIwMCwicSI6bnVsbCwiaWF0IjoxNjM1NjEyODA3fQ__.d52f7b901cc75074197d5fc1f564b79a3202d3bcdfe26f9d463834b6983225ae"} />
-      <div className="cards-container">
-        {/*<PoliticianGallery />*/}
-
-        {deputiesData
-        /*.filter(politician => ((deputyExtraDataDictionary[politician.id]?.gender != undefined) ? deputyExtraDataDictionary[politician.id].gender : false))*/
-        /*.filter(politician => (politician.siglaPartido == "PSL"))*/
-        /*.filter(politician => (politician.siglaUf == "MG"))*/
-        .filter(politician => ((deputyExtraDataDictionary[politician.id]?.voting != undefined) ? deputyExtraDataDictionary[politician.id].voting < 30 && deputyExtraDataDictionary[politician.id].voting >= 1 : false))
-        .map((politician, idx) => (
-          <div
-            className="cardContainerCenter"
-            onClick={ async () => {
-              /*setModalShow(true);
+          {deputiesData
+            /*.filter(politician => ((deputyExtraDataDictionary[politician.id]?.gender != undefined) ? deputyExtraDataDictionary[politician.id].gender : false))*/
+            /*.filter(politician => (politician.siglaPartido == "PSL"))*/
+            /*.filter(politician => (politician.siglaUf == "MG"))*/
+            .filter((politician) =>
+              deputyExtraDataDictionary[politician.id]?.voting != undefined
+                ? deputyExtraDataDictionary[politician.id].voting < 30 &&
+                  deputyExtraDataDictionary[politician.id].voting >= 1
+                : false
+            )
+            .map((politician, idx) => (
+              <div
+                className="cardContainerCenter"
+                onClick={async () => {
+                  /*setModalShow(true);
 
               setIdPolitician(politician.id);
               setUrlPolitician(politician.uri);
@@ -2134,40 +2470,53 @@ function App() {
               setSpeechData(politician.id, 1);
               setAttendanceData(politician.id);
               setExpensesData(politician.id, 1);*/
-              waitForUs(politician) 
-            }}
-          >
-            <Image
-              className="cardImage"
-              src={politician.urlFoto + "maior.jpg"}
-              rounded
-            />
+                  waitForUs(politician);
+                }}
+              >
+                <Image
+                  className="cardImage"
+                  src={politician.urlFoto + "maior.jpg"}
+                  rounded
+                />
 
-            <Card bg="dark" text="white" style={{ width: "18rem" }}>
-              <Card.Body className="cardPadding txtCenter">
-                <Card.Subtitle>Deputad{ (deputyExtraDataDictionary[politician.id]?.gender != undefined) ? deputyExtraDataDictionary[politician.id].gender ? "a" : "o" : "o" } Federal</Card.Subtitle>
-                <Card.Title>{politician.nome}</Card.Title>
+                <Card bg="dark" text="white" style={{ width: "18rem" }}>
+                  <Card.Body className="cardPadding txtCenter">
+                    <Card.Subtitle>
+                      Deputad
+                      {deputyExtraDataDictionary[politician.id]?.gender !=
+                      undefined
+                        ? deputyExtraDataDictionary[politician.id].gender
+                          ? "a"
+                          : "o"
+                        : "o"}{" "}
+                      Federal
+                    </Card.Subtitle>
+                    <Card.Title>{politician.nome}</Card.Title>
 
-                <Card.Text className="cardTextLeft">
-                  Partido:{" "}
-                  <span className="cardTextRight">
-                    {politician.siglaPartido}
-                  </span>
-                  <br />
-                  UF (estado):{" "}
-                  <span className="cardTextRight">{politician.siglaUf}</span>
-                </Card.Text>
-              </Card.Body>
-            </Card>
-          </div>
-        ))}
+                    <Card.Text className="cardTextLeft">
+                      Partido:{" "}
+                      <span className="cardTextRight">
+                        {politician.siglaPartido}
+                      </span>
+                      <br />
+                      UF (estado):{" "}
+                      <span className="cardTextRight">
+                        {politician.siglaUf}
+                      </span>
+                    </Card.Text>
+                  </Card.Body>
+                </Card>
+              </div>
+            ))}
 
-        <PoliticianModal show={modalShow} onHide={() => setModalShow(false)} />
-        <SearchModal show={modalShow2} onHide={() => setModalShow2(false)} />
-        <LoaderModal show={loaderShow} onHide={() => setLoaderShow(false)} />
+          <PoliticianModal
+            show={modalShow}
+            onHide={() => setModalShow(false)}
+          />
+          <SearchModal show={modalShow2} onHide={() => setModalShow2(false)} />
+          <LoaderModal show={loaderShow} onHide={() => setLoaderShow(false)} />
+        </div>
       </div>
-    </div>
-    
     </div>
   );
 }
