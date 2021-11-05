@@ -64,6 +64,15 @@ export function setLegislature(id: number) {
     "/biografia";
 }
 
+interface Search {
+  name: string,
+  /*party: string,
+  state: string,
+  votingMin: number,
+  votingMax: number,
+  gender: boolea*/
+}
+
 function App() {
   const [modalShow, setModalShow] = useState(false);
   const [modalShow2, setModalShow2] = useState(false);
@@ -90,6 +99,9 @@ function App() {
   const [authorships, setAuthorships] = useState<Proposition>();
   const [reports, setReports] = useState<Proposition>();
 
+  //const [loading, setLoading] = useState<number>();
+  const [search, setSearch] = useState<Search>();
+
   useEffect(() => {
     const getData = async () => {
       const response = await axios.get<DeputyResponse>(
@@ -101,6 +113,11 @@ function App() {
     getData();
   }, []);
 
+  /*const handleSubmit = (event) => {
+    const form = event.currentTarget;
+    setSearch({name: event})
+  }*/
+
   function SearchModal(props: any) {
     return (
       <Modal
@@ -110,7 +127,9 @@ function App() {
         centered
       >
         <Modal.Body className="show-grid bg-dark">
+          
           <Container>
+          <Form id="searchForm"> {/*onSubmit={handleSubmit}*/}
             <Row className="middle">
               <Col xs={12} md={12}>
                 <Row className="mb-3">
@@ -118,8 +137,9 @@ function App() {
                     <Form.Floating className="mb-3">
                       <Form.Control
                         id="floatingInputCustom"
-                        type=""
+                        type="text"
                         placeholder="Nome do parlamentar"
+                        /*onChange={e=>{ setSearch({name: e.target.value.toString()})}}*/
                       />
                       <label htmlFor="floatingInputCustom">Nome</label>
                     </Form.Floating>
@@ -130,7 +150,7 @@ function App() {
                       controlId="floatingSelectGrid"
                       label="Partido"
                     >
-                      <Form.Select aria-label="Floating label select example">
+                      <Form.Select id="party" aria-label="Floating label select example">
                         <option>todos</option>
                         <option value="DEM">DEM</option>
                         <option value="PT">PT</option>
@@ -176,12 +196,14 @@ function App() {
                 </Row>
               </Col>
             </Row>
+            <Modal.Footer className="bg-dark">
+              <Form.Group>
+                <Button variant="primary" type="submit">Procurar</Button> {/*onClick={setSearch({name: formGridPassword})}*/}
+              </Form.Group>
+            </Modal.Footer>
+            </Form>
           </Container>
         </Modal.Body>
-
-        <Modal.Footer className="bg-dark">
-          <Button variant="primary">Procurar</Button>
-        </Modal.Footer>
       </Modal>
     );
   }
@@ -218,6 +240,7 @@ function App() {
           className="show-grid"
         >
           <Container className="txtCenter">
+            {/*<ProgressBar variant="dark" now={loading} />*/}
             <Row className="middle">
               <Col
                 className="message"
@@ -239,12 +262,7 @@ function App() {
         >
           {/*<Image onClick={props.onHide} style={{ width: "48px" }} src={""} />{' '}
             <Image onClick={props.onHide} style={{ width: "48px" }} src={""} />*/}
-          <ProgressBar
-            animated
-            variant="sucess"
-            now={40}
-            style={{ padding: "10px" }}
-          />
+          <Spinner animation="grow" size="sm" />
         </Modal.Footer>
       </Modal>
     );
@@ -417,8 +435,40 @@ function App() {
                   </ListGroup.Item>
                   <ListGroup.Item className="bgTrans wc">
                     Despesas (
-                    {expenses?.parliamentaryQuotaExpense == null &&
-                    expenses?.parliamentaryQuotaBudget == null
+                    {
+                      (expenses?.parliamentaryQuotaExpense != null && expenses?.parliamentaryQuotaExpense != undefined &&
+                        expenses?.parliamentaryQuotaBudget != null && expenses?.parliamentaryQuotaBudget != undefined) &&
+                      (expenses?.parliamentaryQuotaExpense != 0 || expenses?.parliamentaryQuotaBudget != 0) ||
+                      (expenses?.cabinetExpense != null && expenses?.cabinetExpense != undefined &&
+                        expenses?.cabinetBudget != null && expenses?.cabinetBudget != undefined) &&
+                      (expenses?.cabinetExpense != 0 || expenses?.cabinetBudget != 0)
+                      ? "(" +
+                        (expenses?.parliamentaryQuotaExpense != null && expenses?.parliamentaryQuotaExpense != undefined &&
+                          expenses?.parliamentaryQuotaBudget != null && expenses?.parliamentaryQuotaBudget != undefined) &&
+                        (expenses?.parliamentaryQuotaExpense != 0 || expenses?.parliamentaryQuotaBudget != 0)
+                        ? (
+                            100 -
+                            (expenses.parliamentaryQuotaExpense /
+                              expenses.parliamentaryQuotaBudget == 0 ? 1 : expenses.parliamentaryQuotaBudget) *
+                              100
+                          ) + "%" //.toFixed(2)
+                        : "(" +
+                        (expenses?.cabinetExpense != null && expenses?.cabinetExpense != undefined &&
+                          expenses?.cabinetBudget != null && expenses?.cabinetBudget != undefined) &&
+                        (expenses?.cabinetExpense != 0 || expenses?.cabinetBudget != 0)
+                        ? (
+                          100 -
+                          (expenses.cabinetExpense /
+                            expenses.cabinetBudget == 0 ? 1 : expenses.cabinetBudget) *
+                            100
+                        ) + "%)" //.toFixed(2)
+                        : ")"
+                      : ""
+                    }
+
+                    {/*{ (expenses?.parliamentaryQuotaExpense == null &&
+                    expenses?.parliamentaryQuotaBudget == null) || (expenses?.parliamentaryQuotaExpense == 0 &&
+                      expenses?.parliamentaryQuotaBudget == 0)
                       ? ""
                       : (
                           100 -
@@ -427,20 +477,24 @@ function App() {
                             100
                         ).toFixed(2) + "%"}{" "}
                     |{" "}
-                    {expenses?.cabinetExpense == null &&
-                    expenses?.cabinetBudget == null
+                    { (expenses?.cabinetExpense == null &&
+                    expenses?.cabinetBudget == null) || (expenses?.cabinetExpense == 0 &&
+                      expenses?.cabinetBudget == 0)
                       ? ""
                       : (
                           100 -
                           (expenses.cabinetExpense / expenses.cabinetBudget) *
                             100.0
-                        ).toFixed(2) + "%"}
-                    )
+                        ).toFixed(2) + "%"}*/}
+                      )
                     <span className="cardTextRight">
                       {(expenses?.parliamentaryQuotaExpense == null &&
                       expenses?.parliamentaryQuotaBudget == null
                         ? 0
-                        : parseInt(
+                        : (expenses?.parliamentaryQuotaExpense == 0 &&
+                          expenses?.parliamentaryQuotaBudget == 0) 
+                          ? 100
+                          : parseInt(
                             (
                               100 -
                               (expenses.parliamentaryQuotaExpense /
@@ -451,7 +505,10 @@ function App() {
                           (expenses?.cabinetExpense == null &&
                           expenses?.cabinetBudget == null
                             ? 0
-                            : parseInt(
+                            : (expenses?.cabinetExpense == 0 &&
+                              expenses?.cabinetBudget == 0) 
+                              ? 100
+                              : parseInt(
                                 (
                                   100 -
                                   (expenses.cabinetExpense /
@@ -509,7 +566,14 @@ function App() {
                         ) +
                         "%" +
                         " | " +
-                        Math.round(
+                        (attendances.plenary.dSAttendance == null
+                          || attendances.plenary.dSJustified == null
+                          || attendances.plenary.deliberativedSessions == null) ||
+                          (attendances.plenary.dSAttendance == 0
+                            && attendances.plenary.dSJustified == 0
+                            && attendances.plenary.deliberativedSessions == 0)
+                          ? ""
+                          : Math.round(
                           ((attendances.plenary.dSAttendance +
                             attendances.plenary.dSJustified) /
                             attendances.plenary.deliberativedSessions) *
@@ -534,13 +598,20 @@ function App() {
                                 attendances.committee.justified +
                                 attendances.committee.miss)) *
                               100
-                          ) +
-                            Math.round(
+                          ) + 
+                          ((attendances.plenary.dSAttendance == null
+                            || attendances.plenary.dSJustified == null
+                            || attendances.plenary.deliberativedSessions == null) ||
+                            (attendances.plenary.dSAttendance == 0
+                              && attendances.plenary.dSJustified == 0
+                              && attendances.plenary.deliberativedSessions == 0)
+                            ? 0
+                            : Math.round(
                               ((attendances.plenary.dSAttendance +
                                 attendances.plenary.dSJustified) /
                                 attendances.plenary.deliberativedSessions) *
                                 100
-                            )) /
+                            ))) /
                           2}
                     </span>
                   </ListGroup.Item>
@@ -573,7 +644,7 @@ function App() {
                 <Accordion>
                   <Accordion.Item eventKey="0">
                     <Accordion.Header>
-                      Despesas (R$
+                      Despesas de Cota Parlamentar e Verba de Gabinete. respectivamente (R$
                       {expenses?.parliamentaryQuotaExpense == null
                         ? ""
                         : commaNotation(
@@ -689,7 +760,7 @@ function App() {
                   </Accordion.Item>
                   <Accordion.Item eventKey="1">
                     <Accordion.Header>
-                      Discursos ({speechs?.count == null ? 0 : speechs.count})
+                      Discursos (Total: {speechs?.count == null ? 0 : speechs.count})
                     </Accordion.Header>
                     <Accordion.Body>
                       {/*{
@@ -793,7 +864,7 @@ function App() {
                   </Accordion.Item>
                   <Accordion.Item eventKey="2">
                     <Accordion.Header>
-                      Presença (
+                      Presença em Comissões e Plenário, respectivamente (
                       {(attendances?.committee.attendance == null &&
                         attendances?.committee.miss == null &&
                         attendances?.range == null) ||
@@ -1196,9 +1267,24 @@ function App() {
             }
           />
           {/*</Button>*/}
+          <ProgressBar variant="info" now={20} />
         </Modal.Footer>
       </Modal>
     );
+  }
+
+  function exists (value: any): boolean {
+    if (value != null && value != undefined)
+      return true
+    else
+      return false
+  }
+
+  function notZero (value: any): boolean {
+    if (value != 0)
+      return true
+    else
+      return false
   }
 
   function partyLogo(party: string) {
@@ -1525,15 +1611,28 @@ function App() {
       );
   }
 
+  let globalDeputyComplete: any
+  let globalParty: any
+  let globalProfession: any
+  let globalOccupation: any
+  let globalLegislature: any
+  let globalExpense: any
+  let globalSpeech: any
+  let globalAttendance: any
+  let globalReports: any
+  let globalAuthorship: any
+
   async function setCurrentPolitician(urlPolitician: string, urlParty: string) {
     const getPolitician = async () => {
       const response = await axios.get<DeputyComplete>(urlPolitician);
-      setDeputyCompleteData(response.data);
+      //setDeputyCompleteData(response.data);
+      globalDeputyComplete = response.data
     };
 
     const getParty = async () => {
       const response = await axios.get<DeputyParty>(urlParty);
-      setDeputyPartyData(response.data);
+      //setDeputyPartyData(response.data);
+      globalParty = response.data
     };
 
     await getPolitician();
@@ -1782,7 +1881,8 @@ function App() {
           id +
           "/profissoes"
       );
-      setDeputyProfessionData(responseProfession.data);
+      //setDeputyProfessionData(responseProfession.data);
+      globalProfession = responseProfession.data
     };
 
     const getOccupation = async () => {
@@ -1791,7 +1891,9 @@ function App() {
           id +
           "/ocupacoes"
       );
-      setDeputyOccupationData(responseOccupation.data);
+
+      //setDeputyOccupationData(responseOccupation.data);
+      globalOccupation = responseOccupation.data
     };
 
     await getProfession();
@@ -1825,25 +1927,32 @@ function App() {
 
     legislatureList.count = legislatureList.list.length;
 
-    setLegislatures(legislatureList);
+    //setLegislatures(legislatureList);
+    globalLegislature = legislatureList
+    //setLoading(loading ? loading : 0 + 20);
   }
 
   async function setExpensesData(id: number, page: number, politician: Deputy) {
     const years = ["2019", "2020"];
-    const cabinetBudget = 111675.59 * 12 * years.length;
 
+    var listMonths: number[];
     const state = politician?.siglaUf == null ? "" : politician.siglaUf;
     var parliamentaryQuotaBudget =
-      parliamentaryQuotaBudgetDictionary[state].value * 12 * years.length;
+      parliamentaryQuotaBudgetDictionary[state].value
+    //const cabinetBudget = 111675.59 * 12 * years.length;
+
+    /*const state = politician?.siglaUf == null ? "" : politician.siglaUf;
+    var parliamentaryQuotaBudget =
+      parliamentaryQuotaBudgetDictionary[state].value //* 12 * years.length;*/
 
     let expensesData: Expense = {} as Expense;
     expensesData.cabinetExpense = 0;
-    expensesData.cabinetBudget = cabinetBudget;
+    expensesData.cabinetBudget = 0;
     expensesData.parliamentaryQuotaExpense = 0;
-    expensesData.parliamentaryQuotaBudget =
-      parliamentaryQuotaBudget == null ? 0 : parliamentaryQuotaBudget;
+    expensesData.parliamentaryQuotaBudget = 0
+      //parliamentaryQuotaBudget == null ? 0 : parliamentaryQuotaBudget;
     expensesData.parliamentaryExpenseListDescription = [];
-    expensesData.range = years.length;
+    expensesData.range = 0//years.length;
 
     async function paginationExpense(id: number, page: number, y: number) {
       const response = await axios.get(
@@ -1855,43 +1964,53 @@ function App() {
           page +
           "&itens=1000&ordem=ASC&ordenarPor=mes"
       );
-      const cabinetExpenses = response.data.dados;
+
+      const parliamentaryExpenseRegisters = response.data.dados;
 
       console.log("GABINETE");
-      console.log(cabinetExpenses);
+      console.log(parliamentaryExpenseRegisters);
 
-      for (let a = 0; a < cabinetExpenses.length; a++) {
+      for (let a = 0; a < parliamentaryExpenseRegisters.length; a++) {
         expensesData.parliamentaryExpenseListDescription.push({
-          year: cabinetExpenses[a].ano,
-          month: cabinetExpenses[a].mes,
-          type: cabinetExpenses[a].tipoDespesa,
-          documentCode: cabinetExpenses[a].codDocumento,
-          documentType: cabinetExpenses[a].tipoDocumento,
-          documentCodeType: cabinetExpenses[a].codTipoDocumento,
-          date: cabinetExpenses[a].dataDocumento,
-          documentNumber: cabinetExpenses[a].numDocumento,
-          documentValue: cabinetExpenses[a].valorDocumento,
-          documentUrl: cabinetExpenses[a].urlDocumento,
-          providerName: cabinetExpenses[a].nomeFornecedor,
-          providerRegister: cabinetExpenses[a].cnpjCpfFornecedor,
-          netValue: cabinetExpenses[a].valorLiquido,
-          value: cabinetExpenses[a].valorGlosa,
-          refund: cabinetExpenses[a].numRessarcimento,
-          partCode: cabinetExpenses[a].codLote,
-          quota: cabinetExpenses[a].parcela,
+          year: parliamentaryExpenseRegisters[a].ano,
+          month: parliamentaryExpenseRegisters[a].mes,
+          type: parliamentaryExpenseRegisters[a].tipoDespesa,
+          documentCode: parliamentaryExpenseRegisters[a].codDocumento,
+          documentType: parliamentaryExpenseRegisters[a].tipoDocumento,
+          documentCodeType: parliamentaryExpenseRegisters[a].codTipoDocumento,
+          date: parliamentaryExpenseRegisters[a].dataDocumento,
+          documentNumber: parliamentaryExpenseRegisters[a].numDocumento,
+          documentValue: parliamentaryExpenseRegisters[a].valorDocumento,
+          documentUrl: parliamentaryExpenseRegisters[a].urlDocumento,
+          providerName: parliamentaryExpenseRegisters[a].nomeFornecedor,
+          providerRegister: parliamentaryExpenseRegisters[a].cnpjCpfFornecedor,
+          netValue: parliamentaryExpenseRegisters[a].valorLiquido,
+          value: parliamentaryExpenseRegisters[a].valorGlosa,
+          refund: parliamentaryExpenseRegisters[a].numRessarcimento,
+          partCode: parliamentaryExpenseRegisters[a].codLote,
+          quota: parliamentaryExpenseRegisters[a].parcela,
         });
         expensesData.parliamentaryQuotaExpense +=
-          cabinetExpenses[a].valorDocumento;
+          parliamentaryExpenseRegisters[a].valorDocumento;
+        if (!listMonths.includes(parliamentaryExpenseRegisters[a].mes))
+          listMonths.push(
+            parliamentaryExpenseRegisters[a].mes
+          );
+        
       }
 
-      if (cabinetExpenses.length === 100) {
+      if (parliamentaryExpenseRegisters.length === 100) {
         page++;
-        paginationExpense(id, page, y);
+        await paginationExpense(id, page, y);
       }
     }
 
     for (let y = 0; y < years.length; y++) {
-      paginationExpense(id, page, y);
+      listMonths = [];
+      await paginationExpense(id, page, y);
+      expensesData.parliamentaryQuotaBudget += parliamentaryQuotaBudget * listMonths.length
+      expensesData.range += listMonths.length
+      
 
       const response = await axios.get(
         "https://totalcors.herokuapp.com/https://www.camara.leg.br/deputados/" +
@@ -1919,9 +2038,13 @@ function App() {
       }
 
       expensesData.cabinetExpense += expensesLast.reduce((a, b) => a + b, 0);
+      expensesData.cabinetBudget += 111675.59 * expensesList.length
+      expensesData.range += expensesList.length
     }
 
-    setExpenses(expensesData);
+    //setExpenses(expensesData);
+    globalExpense = expensesData
+    //setLoading(40);
   }
 
   async function setSpeechData(id: number, page: number) {
@@ -1953,7 +2076,9 @@ function App() {
 
     await counting(id, page);
 
-    setSpeechs(speechsList);
+    //setSpeechs(speechsList);
+    globalSpeech = speechsList
+    //setLoading(60);
   }
 
   async function setAttendanceData(id: number) {
@@ -2048,7 +2173,9 @@ function App() {
 
     attendanceData.range = years.length;
 
-    setAttendance(attendanceData);
+    //setAttendance(attendanceData);
+    globalAttendance = attendanceData
+    //setLoading(80);
   }
 
   async function setAuthorshipPropositions(id: number) {
@@ -2066,7 +2193,7 @@ function App() {
     const getPropositionsApproved = async () => {
       const response = await axios.get(
         "https://totalcors.herokuapp.com/https://www.camara.leg.br/internet/sileg/Prop_lista.asp?Autor=0&ideCadastro=" +
-          idPolitician +
+          id +
           "&Limite=N&tipoProp=2"
       );
       const $ = cheerio.load(response.data);
@@ -2091,7 +2218,7 @@ function App() {
             "https://totalcors.herokuapp.com/https://www.camara.leg.br/internet/sileg/Prop_lista.asp?Pagina=" +
               index +
               "&Autor=0&ideCadastro=" +
-              idPolitician +
+              id +
               "&Limite=N&tipoProp=2"
           );
           const $ = cheerio.load(response.data);
@@ -2119,7 +2246,9 @@ function App() {
           propositionList.propositions.push(obj);
         });
 
-        setAuthorships(propositionList);
+        //setAuthorships(propositionList);
+        globalAuthorship = propositionList
+        //setLoading(90);
       } else {
         //revisar
         propositionList.total = 1;
@@ -2144,7 +2273,9 @@ function App() {
           }
         }
 
-        setAuthorships(propositionList);
+        //setAuthorships(propositionList);
+        globalAuthorship = propositionList
+        //setLoading(90);
       }
     };
 
@@ -2160,13 +2291,13 @@ function App() {
         link: "string",
       },
     ];
-
+    
     propositionList.propositions.pop();
 
     const getPropositions = async () => {
       const response = await axios.get(
         "https://totalcors.herokuapp.com/https://www.camara.leg.br/internet/sileg/Prop_lista.asp?Relator=0&ideCadastroProp=" +
-          idPolitician +
+          id +
           "&Limite=N&tipoProp=3"
       );
       const $ = cheerio.load(response.data);
@@ -2183,6 +2314,7 @@ function App() {
             number = arrayNumber[i].match(/\b(\w+)\b/g)[2];
 
         propositionList.total = number;
+        
 
         console.log(propositionList);
 
@@ -2191,7 +2323,7 @@ function App() {
             "https://totalcors.herokuapp.com/https://www.camara.leg.br/internet/sileg/Prop_lista.asp?Pagina=" +
               index +
               "&Relator=0&ideCadastroProp=" +
-              idPolitician +
+              id +
               "&Limite=N&tipoProp=3"
           );
           const $ = cheerio.load(response2.data);
@@ -2219,7 +2351,9 @@ function App() {
           propositionList.propositions.push(obj);
         });
 
-        setReports(propositionList);
+        //setReports(propositionList);
+        globalReports = propositionList
+        //setLoading(100);
       } else {
         //revisar
         propositionList.total = 1;
@@ -2232,7 +2366,7 @@ function App() {
           element.replace("Inteiro teor", "");
           element.trim();
         });
-
+        
         for (let i = 0; i < array.length; i++) {
           if (i === 1) {
             array[i] = array[i].replace("Inteiro teor", "");
@@ -2244,11 +2378,26 @@ function App() {
           }
         }
 
-        setReports(propositionList);
+        //setReports(propositionList);
+        globalReports = propositionList
+        //setLoading(100);
       }
     };
 
     await getPropositions();
+  }
+
+  async function setAllStates() {
+    setDeputyCompleteData(globalDeputyComplete);
+    setDeputyPartyData(globalParty);
+    setDeputyProfessionData(globalProfession);
+    setDeputyOccupationData(globalOccupation);
+    setLegislatures(globalLegislature);
+    setExpenses(globalExpense);
+    setSpeechs(globalSpeech);
+    setAttendance(globalAttendance);
+    setAuthorships(globalAuthorship);
+    setReports(globalReports);
   }
 
   async function allRequests(politician: Deputy, _callback: Function) {
@@ -2288,6 +2437,7 @@ function App() {
     await setSpeechData(politician.id, 1);
     await setAttendanceData(politician.id);
     await setExpensesData(politician.id, 1, politician);
+    await setAllStates();
 
     // --
 
@@ -2445,15 +2595,16 @@ function App() {
           {/*<PoliticianGallery />*/}
 
           {deputiesData
+            /*.filter(politician => (search?.name) ? (politician.nome == search.name) : politician)*/
             /*.filter(politician => ((deputyExtraDataDictionary[politician.id]?.gender != undefined) ? deputyExtraDataDictionary[politician.id].gender : false))*/
-            /*.filter(politician => (politician.siglaPartido == "PSL"))*/
+            /*.filter(politician => (politician.siglaPartido == "PODE"))*/
             /*.filter(politician => (politician.siglaUf == "MG"))*/
-            .filter((politician) =>
+            /*.filter((politician) =>
               deputyExtraDataDictionary[politician.id]?.voting != undefined
-                ? deputyExtraDataDictionary[politician.id].voting < 30 &&
+                ? deputyExtraDataDictionary[politician.id].voting <= 40 &&
                   deputyExtraDataDictionary[politician.id].voting >= 1
                 : false
-            )
+            )*/
             .map((politician, idx) => (
               <div
                 className="cardContainerCenter"
@@ -2471,6 +2622,7 @@ function App() {
               setAttendanceData(politician.id);
               setExpensesData(politician.id, 1);*/
                   waitForUs(politician);
+                  //setLoading(0);
                 }}
               >
                 <Image
