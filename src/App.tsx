@@ -79,6 +79,7 @@ function App() {
   const [loaderShow, setLoaderShow] = useState(false);
 
   const [deputiesData, setDeputiesData] = useState<Deputy[]>([]);
+  const [deputiesDataFilter, setDeputiesDataFilter] = useState<Deputy[]>([]);
   const [deputyCompleteData, setDeputyCompleteData] =
     useState<DeputyComplete>();
   const [deputyPartyData, setDeputyPartyData] = useState<DeputyParty>();
@@ -101,6 +102,7 @@ function App() {
 
   //const [loading, setLoading] = useState<number>();
   const [search, setSearch] = useState<Search>();
+  const [inputName, setInputName] = useState<string>();
 
   useEffect(() => {
     const getData = async () => {
@@ -108,6 +110,7 @@ function App() {
         "https://dadosabertos.camara.leg.br/api/v2/deputados?ordem=ASC&ordenarPor=nome"
       );
       setDeputiesData(response.data.dados);
+      setDeputiesDataFilter(response.data.dados);
     };
 
     getData();
@@ -117,6 +120,21 @@ function App() {
     const form = event.currentTarget;
     setSearch({name: event})
   }*/
+
+  var name:string;
+  var party:string;
+  var state:string;
+  var votingMin:number = 0;
+  var votingMax:number = 100;
+  var gender:any;
+
+  /*async function setValue(name: string) {
+    setInputName(name)
+  }*/
+
+  async function setFilter(deputies: Deputy[]) {
+    setDeputiesDataFilter(deputies)
+  }
 
   function SearchModal(props: any) {
     return (
@@ -139,7 +157,8 @@ function App() {
                         id="floatingInputCustom"
                         type="text"
                         placeholder="Nome do parlamentar"
-                        /*onChange={e=>{ setSearch({name: e.target.value.toString()})}}*/
+                        onChange={ e => { name = e.target.value.toString() } }
+                        value={name}
                       />
                       <label htmlFor="floatingInputCustom">Nome</label>
                     </Form.Floating>
@@ -150,11 +169,18 @@ function App() {
                       controlId="floatingSelectGrid"
                       label="Partido"
                     >
-                      <Form.Select id="party" aria-label="Floating label select example">
-                        <option>todos</option>
-                        <option value="DEM">DEM</option>
+                      <Form.Select id="party" aria-label="Floating label select example"
+                        onChange={ e => { party = e.currentTarget.value.toString() } }
+                        value={party}
+                      >
+                        <option value="null">TODOS</option>
+                        { Object.keys(partyLogoDictionary).map((elements: string) => (
+                          (elements != "PATRI") ?
+                            <option value={ elements }>{ elements }</option> : null                         
+                        )) }
+                        {/*<option value="DEM">DEM</option>
                         <option value="PT">PT</option>
-                        <option value="PV">PV</option>
+                        <option value="PV">PV</option>*/}
                       </Form.Select>
                     </FloatingLabel>
                   </Form.Group>
@@ -163,23 +189,26 @@ function App() {
                 <Row className="mb-3 wc">
                   <Form.Group as={Col} controlId="formGridEmail">
                     <Col sm={10}>
-                      <Form.Check
+                      {/*<Form.Check
                         type="radio"
                         label="Todos"
                         name="formHorizontalRadios"
                         id="formHorizontalRadios1"
-                      />
+                      />*/}
                       <Form.Check
                         type="radio"
                         label="Maculino"
                         name="formHorizontalRadios"
                         id="formHorizontalRadios2"
+                        onChange={ e => { (e.target.value == "on") ? gender = false : gender = null; console.log(gender) } }
+                        //value={gender}
                       />
                       <Form.Check
                         type="radio"
                         label="Feminino"
                         name="formHorizontalRadios"
                         id="formHorizontalRadios3"
+                        onChange={ e => { (e.target.value == "on") ? gender = true : gender = null; console.log(gender) } }
                       />
                     </Col>
                   </Form.Group>
@@ -190,15 +219,15 @@ function App() {
                     className="wc"
                   >
                     <Form.Label>Governismo</Form.Label>
-                    <Form.Range min="0" max="100" value="0" step="5" />
-                    <Form.Range />
+                    <Form.Range min="0" max="100" step="5" onChange={ e => { votingMin = Number(e.target.value) != null || Number(e.target.value) != undefined ? Number(e.target.value) : 0 /*!= null ? votingMin = 4Number(e.target.value) : null*/ } } />
+                    <Form.Range min="0" max="100" step="5" onChange={ e => { votingMax = Number(e.target.value) != null || Number(e.target.value) != undefined ? Number(e.target.value) : 100 /*!= null ? votingMin = 4Number(e.target.value) : null*/ } } />
                   </Form.Group>
                 </Row>
               </Col>
             </Row>
             <Modal.Footer className="bg-dark">
               <Form.Group>
-                <Button variant="primary" type="submit">Procurar</Button> {/*onClick={setSearch({name: formGridPassword})}*/}
+                <Button variant="primary" onClick={ () => { setDeputiesDataFilter(deputiesData.filter(politician => (name) ? (politician.nome.includes(name)) : politician).filter(politician => (party != undefined && party != null) ? (politician.siglaPartido == party) : politician).filter(politician => (gender != undefined && gender != null) ? (deputyExtraDataDictionary[politician.id]?.gender != undefined && deputyExtraDataDictionary[politician.id]?.gender != null ? deputyExtraDataDictionary[politician.id].gender == gender : null) : politician).filter(politician => (votingMin || votingMax) ? (deputyExtraDataDictionary[politician.id]?.voting != undefined && deputyExtraDataDictionary[politician.id]?.voting != null ? (votingMax >= deputyExtraDataDictionary[politician.id].voting && deputyExtraDataDictionary[politician.id].voting >= votingMin) : null) : politician)) } }>Procurar</Button> {/*; console.log("AQUI Ô" + " " + party) onClick={setSearch({name: formGridPassword})} ; props.onHide*/}
               </Form.Group>
             </Modal.Footer>
             </Form>
@@ -313,7 +342,7 @@ function App() {
         >
           <Container className="txtCenter">
             <Row className="middle">
-              <Col xs={6} md={6}>
+              <Col xs={12} md={6}>
                 <h4 className="wc">Dados Pessoais</h4>
                 <br />
                 <h6 className="cardTextLeft wc">
@@ -355,7 +384,7 @@ function App() {
                   </Accordion.Item>
                 </Accordion>
               </Col>
-              <Col xs={6} md={6}>
+              <Col xs={12} md={6}>
                 <h4 className="wc">Estrutura do Partido Filiado</h4>
                 <br />
                 <Image
@@ -2495,6 +2524,13 @@ function App() {
     //allRequests(function (politician) { function () { setModalShow(true); } });
   }
 
+  /*function getIcon(icon:string):string {
+    const response = axios.get(
+      "https://api.iconscout.com/v3/search?query=" + document.getElementById("search").value + "&product_type=item&asset=icon&price=free&per_page=10&page=" + document.getElementById("pagination").value + "&sort=relevant"
+    );
+    return ''
+  }*/
+
   return (
     <div style={{ backgroundColor: "black" }}>
       {/*<Navbar bg="dark" variant="dark">
@@ -2594,8 +2630,8 @@ function App() {
         <div className="cards-container">
           {/*<PoliticianGallery />*/}
 
-          {deputiesData
-            /*.filter(politician => (search?.name) ? (politician.nome == search.name) : politician)*/
+          {deputiesDataFilter
+            /*.filter(politician => (inputName) ? (politician.nome == inputName) : politician)*/
             /*.filter(politician => ((deputyExtraDataDictionary[politician.id]?.gender != undefined) ? deputyExtraDataDictionary[politician.id].gender : false))*/
             /*.filter(politician => (politician.siglaPartido == "PODE"))*/
             /*.filter(politician => (politician.siglaUf == "MG"))*/
@@ -2625,6 +2661,8 @@ function App() {
                   //setLoading(0);
                 }}
               >
+                { console.log("DEPUTIES") }
+                { console.log(politician) }
                 <Image
                   className="cardImage"
                   src={politician.urlFoto + "maior.jpg"}

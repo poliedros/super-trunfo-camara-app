@@ -19,11 +19,11 @@ export const getCoordinateData = (
 ) => {
   var list: Coordinate[] = [];
   list.push({
-    name: "Legislaturas",
+    name: "LEG", //Legislaturas
     star: legislatures?.count == null ? 0 : legislatures.count * 20,
   });
   list.push({
-    name: "Despesas",
+    name: "DES", //Despesas
     star:
       ((expenses?.parliamentaryQuotaExpense == null &&
       expenses?.parliamentaryQuotaBudget == null
@@ -63,12 +63,12 @@ export const getCoordinateData = (
       2,
   });
   list.push({
-    name: "Discursos",
+    name: "DIS", //Discursos
     star: speechs?.count == null ? 0 : (speechs.count*100)/800,
   });
-  list.push({ name: "Votações", star: (deputyCompleteData?.dados.id) ? (deputyExtraDataDictionary[deputyCompleteData.dados.id]?.voting != undefined) ? deputyExtraDataDictionary[deputyCompleteData.dados.id].voting : 0 : 0 });
+  list.push({ name: "VOT", star: (deputyCompleteData?.dados.id) ? (deputyExtraDataDictionary[deputyCompleteData.dados.id]?.voting != undefined) ? deputyExtraDataDictionary[deputyCompleteData.dados.id].voting : 0 : 0 }); //Votações
   list.push({
-    name: "Presenças",
+    name: "PRE", //Presenças
     star:
       attendances?.committee.attendance == null &&
       attendances?.committee.miss == null &&
@@ -96,12 +96,12 @@ export const getCoordinateData = (
           2,
   });
   list.push({
-    name: "Leis Aprovadas",
+    name: "LEI", //Leis Aprovadas
     star: parseInt(
       (
         (+(authorships?.total == null ? 0 : authorships.total) +
           +(reports?.total == null ? 0 : reports.total)) /
-        (legislatures?.count == null ? 1 : legislatures.count)
+        (legislatures?.count == null ? 0 : legislatures.count)
       ).toFixed(2)
     ),
   });
