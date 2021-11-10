@@ -2524,12 +2524,17 @@ function App() {
     //allRequests(function (politician) { function () { setModalShow(true); } });
   }
 
-  /*function getIcon(icon:string):string {
+  function getIcon(icon:string):string {
+    /*const username = ''
+    const password = '188982600146859'
+    const token = Buffer.from(`${username}:${password}`, 'utf8').toString('base64')*/
     const response = axios.get(
-      "https://api.iconscout.com/v3/search?query=" + document.getElementById("search").value + "&product_type=item&asset=icon&price=free&per_page=10&page=" + document.getElementById("pagination").value + "&sort=relevant"
+      "https://api.iconscout.com/v3/search?query=science&product_type=item&asset=icon&price=free&per_page=10&page=1&sort=relevant"
     );
+    console.log("RESPONSE");
+    console.log(response);
     return ''
-  }*/
+  }
 
   return (
     <div style={{ backgroundColor: "black" }}>
@@ -2624,7 +2629,8 @@ function App() {
             setModalShow2(true);
           }}
           src={
-            "https://d1b1fjiwh8olf2.cloudfront.net/icon/free/svg/459980.svg?token=eyJhbGciOiJoczI1NiIsImtpZCI6ImRlZmF1bHQifQ__.eyJpc3MiOiJkMWIxZmppd2g4b2xmMi5jbG91ZGZyb250Lm5ldCIsImV4cCI6MTYzNTgxMTIwMCwicSI6bnVsbCwiaWF0IjoxNjM1NjEyODA3fQ__.d52f7b901cc75074197d5fc1f564b79a3202d3bcdfe26f9d463834b6983225ae"
+            //"https://d1b1fjiwh8olf2.cloudfront.net/icon/free/svg/459980.svg?token=eyJhbGciOiJoczI1NiIsImtpZCI6ImRlZmF1bHQifQ__.eyJpc3MiOiJkMWIxZmppd2g4b2xmMi5jbG91ZGZyb250Lm5ldCIsImV4cCI6MTYzNTgxMTIwMCwicSI6bnVsbCwiaWF0IjoxNjM1NjEyODA3fQ__.d52f7b901cc75074197d5fc1f564b79a3202d3bcdfe26f9d463834b6983225ae"
+            getIcon('')
           }
         />
         <div className="cards-container">
