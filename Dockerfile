@@ -1,4 +1,4 @@
-FROM node:stretch-slim as builder
+FROM node:16.13.0-stretch-slim as builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
