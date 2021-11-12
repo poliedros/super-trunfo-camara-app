@@ -35,6 +35,11 @@ import { useAccordionButton } from "react-bootstrap/AccordionButton";
 
 //import deputyExtraData from '../src/data/deputyExtraData.json';
 
+import * as d3 from 'd3';
+
+import { geoMercator, geoEqualEarth, geoPath } from "d3-geo"
+//import { feature } from "topojson-client"
+
 import { Deputy, DeputyResponse } from "./interfaces/Deputy";
 import DeputyComplete from "./interfaces/DeputyComplete";
 import DeputyParty from "./interfaces/DeputyParty";
@@ -64,6 +69,12 @@ export function setLegislature(id: number) {
     "/biografia";
 }
 
+interface Icon {
+  urlSearch?: string,
+  urlShare?: string,
+  urlPrint?: string
+}
+
 interface Search {
   name: string,
   /*party: string,
@@ -72,6 +83,11 @@ interface Search {
   votingMax: number,
   gender: boolea*/
 }
+
+const projection = geoMercator()
+.scale(400)
+.center([-50,-15])
+.translate([800 / 2, 500 / 2])
 
 function App() {
   const [modalShow, setModalShow] = useState(false);
@@ -103,8 +119,48 @@ function App() {
   //const [loading, setLoading] = useState<number>();
   const [search, setSearch] = useState<Search>();
   const [inputName, setInputName] = useState<string>();
+  const [icon, setIcon] = useState<Icon>();
+
+  const [geographies, setGeographies] = useState([])
+
+  var polygons = [];
 
   useEffect(() => {
+    fetch("https://servicodados.ibge.gov.br/api/v3/malhas/paises/BR?formato=application/vnd.geo+json&qualidade=maxima&intrarregiao=UF")
+      .then(response => {
+        //debugger
+        if (response.status !== 200) {
+          console.log(`There was a problem: ${response.status}`)
+          return
+        }
+        
+        response.json().then(worlddata => {
+
+          for (var i=0; i < worlddata.features.length; ++i)
+          {
+              if(worlddata.features[i].geometry.type === "Polygon") {
+                worlddata.features[i].geometry.coordinates[0] = worlddata.features[i].geometry.coordinates[0].reverse();
+                  //console.log(topo.features[i].geometry.coordinates);
+                  polygons.push(worlddata.features[i]);
+              }
+              else if(worlddata.features[i].geometry.type === "MultiPolygon")
+              {
+                  for(var j=0; j<worlddata.features[i].geometry.coordinates.length;++j)
+                  {
+                    worlddata.features[i].geometry.coordinates[j][0] = worlddata.features[i].geometry.coordinates[j][0].reverse();
+                  }
+                  //console.log(topo.features[i].geometry.coordinates)
+                  polygons.push(worlddata.features[i]);
+              }
+          }
+
+          console.log("FEATURE")
+          console.log(worlddata)
+          setGeographies(worlddata.features)
+        })
+        //debugger
+      })
+
     const getData = async () => {
       const response = await axios.get<DeputyResponse>(
         "https://dadosabertos.camara.leg.br/api/v2/deputados?ordem=ASC&ordenarPor=nome"
@@ -113,6 +169,47 @@ function App() {
       setDeputiesDataFilter(response.data.dados);
     };
 
+    const getIcon = async () => {
+      const response1 = await axios.get('https://api.iconscout.com/v3/search?query=lens&product_type=item&asset=icon&price=free&per_page=1&page=61&sort=relevant', 
+          {
+            headers: {
+              'accept': 'application/json',
+              'Client-ID': '188982600146859'
+          }
+        }
+      );
+      const response2 = await axios.get('https://api.iconscout.com/v3/search?query=lens&product_type=item&asset=icon&price=free&per_page=1&page=61&sort=relevant', 
+          {
+            headers: {
+              'accept': 'application/json',
+              'Client-ID': '188982600146859'
+          }
+        }
+      );
+      setIcon({urlSearch: response1.data.response.items.data[0].urls.original,
+      urlShare: response2.data.response.items.data[0].urls.original})
+    }
+
+    /*async function getIcon(icon:string) {
+
+      const response = await axios.get('https://api.iconscout.com/v3/search?query=lens&product_type=item&asset=icon&price=free&per_page=1&page=61&sort=relevant', 
+          {
+            headers: {
+              'accept': 'application/json',
+              'Client-ID': '188982600146859'
+          }
+        }
+      );
+  
+      console.log("RESPONSE")
+      const final:string = response.data.response.items.data[0].urls.original //.then((message) => (message.data.response.items.data[0].urls.original))
+      console.log(final)
+      setIcon(final)
+      //return final
+    }*/
+    
+
+    getIcon();
     getData();
   }, []);
 
@@ -134,6 +231,97 @@ function App() {
 
   async function setFilter(deputies: Deputy[]) {
     setDeputiesDataFilter(deputies)
+  }
+
+  const handleCountryClick = (countryIndex: number) => {
+    switch (countryIndex) {
+      case 16:
+        state = 'MG'
+        break;
+      case 22:
+        state = 'RS'
+        break;
+      case 21:
+        state = 'SC'
+        break;
+      case 20:
+        state = 'PR'
+        break;
+      case 19:
+        state = 'SP'
+        break;
+      case 18:
+        state = 'RJ'
+        break;
+      case 17:
+        state = 'ES'
+        break;
+      case 25:
+        state = 'GO'
+        break;
+      case 23:
+        state = 'MS'
+        break;
+      case 24:
+        state = 'MT'
+        break;
+      case 26:
+        state = 'DF'
+        break;
+      case 15:
+        state = 'BA'
+        break;
+      case 14:
+        state = 'SE'
+        break;
+      case 13:
+        state = 'AL'
+        break;
+      case 12:
+        state = 'PE'
+        break;
+      case 11:
+        state = 'PB'
+        break;
+      case 10:
+        state = 'RN'
+        break;
+      case 9:
+        state = 'CE'
+        break;
+      case 8:
+        state = 'PI'
+        break;
+      case 7:
+        state = 'MA'
+        break;
+      case 6:
+        state = 'TO'
+        break;
+      case 4:
+        state = 'PA'
+        break;
+      case 5:
+        state = 'AP'
+        break;
+      case 2:
+        state = 'AM'
+        break;
+      case 3:
+        state = 'RR'
+        break;
+      case 0:
+        state = 'RO'
+        break;
+      case 1:
+        state = 'AC'
+        break;
+    
+      default: 
+        break;
+    }
+    console.log("Clicked on country: ", countryIndex)
+    console.log("Clicked on country: ", geographies[countryIndex])
   }
 
   function SearchModal(props: any) {
@@ -186,6 +374,43 @@ function App() {
                   </Form.Group>
                 </Row>
 
+                <Row className="middle">
+                  <Col xs={12} md={12}>
+                    <svg width={ 800 } height={ 450 } viewBox="0 0 800 450" style={{ marginTop: "-90px" }}>
+                      <g className="codarea">
+                        {
+                          geographies.map((d,i) => (
+                            <path
+                              key={ `path-${ i }` }
+                              d={ geoPath().projection(projection)(d) ?? undefined }
+                              className="country"
+                              fill={ `rgba(38,50,56,${ 1 / geographies.length * i})` }
+                              stroke="#FFFFFF"
+                              strokeWidth={ 0.5 }
+                              onClick={ () => handleCountryClick(i) }
+                            />
+                          ))
+                        }
+                      </g>
+                      {/*<g className="markers">
+                        {
+                        cities.map((city, i) => (
+                        <circle
+                          cx={ projection(city.coordinates)[0] }
+                          cy={ projection(city.coordinates)[1] }
+                          r={ city.population / 3000000 }
+                          fill="#E91E63"
+                          stroke="#FFFFFF"
+                          className="marker"
+                          onClick={ () => handleMarkerClick(i) }
+                        />
+                        ))
+                        }
+                      </g>*/}
+                    </svg>
+                  </Col>
+                </Row>
+
                 <Row className="mb-3 wc">
                   <Form.Group as={Col} controlId="formGridEmail">
                     <Col sm={10}>
@@ -227,7 +452,7 @@ function App() {
             </Row>
             <Modal.Footer className="bg-dark">
               <Form.Group>
-                <Button variant="primary" onClick={ () => { setDeputiesDataFilter(deputiesData.filter(politician => (name) ? (politician.nome.includes(name)) : politician).filter(politician => (party != undefined && party != null) ? (politician.siglaPartido == party) : politician).filter(politician => (gender != undefined && gender != null) ? (deputyExtraDataDictionary[politician.id]?.gender != undefined && deputyExtraDataDictionary[politician.id]?.gender != null ? deputyExtraDataDictionary[politician.id].gender == gender : null) : politician).filter(politician => (votingMin || votingMax) ? (deputyExtraDataDictionary[politician.id]?.voting != undefined && deputyExtraDataDictionary[politician.id]?.voting != null ? (votingMax >= deputyExtraDataDictionary[politician.id].voting && deputyExtraDataDictionary[politician.id].voting >= votingMin) : null) : politician)) } }>Procurar</Button> {/*; console.log("AQUI Ô" + " " + party) onClick={setSearch({name: formGridPassword})} ; props.onHide*/}
+                <Button variant="primary" onClick={ () => { setDeputiesDataFilter(deputiesData.filter(politician => (name) ? (politician.nome.includes(name)) : politician).filter(politician => (party != undefined && party != null) ? (politician.siglaPartido == party) : politician).filter(politician => (state != undefined && state != null) ? (politician.siglaUf == state) : politician).filter(politician => (gender != undefined && gender != null) ? (deputyExtraDataDictionary[politician.id]?.gender != undefined && deputyExtraDataDictionary[politician.id]?.gender != null ? deputyExtraDataDictionary[politician.id].gender == gender : null) : politician).filter(politician => (votingMin || votingMax) ? (deputyExtraDataDictionary[politician.id]?.voting != undefined && deputyExtraDataDictionary[politician.id]?.voting != null ? (votingMax >= deputyExtraDataDictionary[politician.id].voting && deputyExtraDataDictionary[politician.id].voting >= votingMin) : null) : politician)) } }>Procurar</Button> {/*; console.log("AQUI Ô" + " " + party) onClick={setSearch({name: formGridPassword})} ; props.onHide*/}
               </Form.Group>
             </Modal.Footer>
             </Form>
@@ -2524,20 +2749,29 @@ function App() {
     //allRequests(function (politician) { function () { setModalShow(true); } });
   }
 
-  function getIcon(icon:string):string {
-    /*const username = ''
-    const password = '188982600146859'
-    const token = Buffer.from(`${username}:${password}`, 'utf8').toString('base64')*/
-    const response = axios.get(
-      "https://api.iconscout.com/v3/search?query=science&product_type=item&asset=icon&price=free&per_page=10&page=1&sort=relevant"
-    );
-    console.log("RESPONSE");
-    console.log(response);
-    return ''
-  }
+    /*const response = axios.get(
+      "https://api.iconscout.com/v3/search?query=science&product_type=item&asset=icon&price=free&per_page=10&page=1&sort=relevant",
+      headers: {
+        'accept': 'application/json',
+        'Client-ID': '188982600146859'
+      }
+    )*/
+    /*axios({
+        url: 'https://api.iconscout.com/v3/search?query=lens&product_type=item&asset=icon&price=free&per_page=1&page=61&sort=relevant',
+        method: 'get',
+        headers: {
+            'accept': 'application/json',
+            'Client-ID': '188982600146859'
+        }
+    })
+    .then(response => {
+      JSON.stringify(response.data.response.items.data[0].urls.original)
+    });*/
 
   return (
     <div style={{ backgroundColor: "black" }}>
+      {/* console.log("RESPONSE2") }
+      { getIcon('') */}
       {/*<Navbar bg="dark" variant="dark">
       <Container>
       <Navbar.Brand href="#home">Super-Trunfo · os Políticos</Navbar.Brand>
@@ -2629,8 +2863,8 @@ function App() {
             setModalShow2(true);
           }}
           src={
+            icon?.urlSearch ? icon.urlSearch : ''
             //"https://d1b1fjiwh8olf2.cloudfront.net/icon/free/svg/459980.svg?token=eyJhbGciOiJoczI1NiIsImtpZCI6ImRlZmF1bHQifQ__.eyJpc3MiOiJkMWIxZmppd2g4b2xmMi5jbG91ZGZyb250Lm5ldCIsImV4cCI6MTYzNTgxMTIwMCwicSI6bnVsbCwiaWF0IjoxNjM1NjEyODA3fQ__.d52f7b901cc75074197d5fc1f564b79a3202d3bcdfe26f9d463834b6983225ae"
-            getIcon('')
           }
         />
         <div className="cards-container">
@@ -2667,8 +2901,8 @@ function App() {
                   //setLoading(0);
                 }}
               >
-                { console.log("DEPUTIES") }
-                { console.log(politician) }
+                {/* console.log("DEPUTIES") */}
+                {/* console.log(politician) */}
                 <Image
                   className="cardImage"
                   src={politician.urlFoto + "maior.jpg"}
