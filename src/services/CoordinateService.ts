@@ -10,9 +10,11 @@ import { deputyExtraDataDictionary } from "../data/deputyExtraDataDictionary";
 
 export const getCoordinateData = (
   legislatures: Legislature | undefined,
-  expenses: Expense | undefined,
+  //expenses: Expense | undefined,
+  expenses: number,
   speechs: Speech | undefined,
-  attendances: Attendance | undefined,
+  //attendances: Attendance | undefined,
+  attendances: number,
   authorships: Proposition | undefined,
   reports: Proposition | undefined,
   deputyCompleteData: DeputyComplete | undefined
@@ -20,12 +22,18 @@ export const getCoordinateData = (
   var list: Coordinate[] = [];
   list.push({
     name: "LEG", //Legislaturas
+    //star: legislatures?.count == null ? 0 : legislatures.count * 20,
     star: legislatures?.count == null ? 0 : legislatures.count * 20,
   });
   list.push({
     name: "DES", //Despesas
-    star:
-      ((expenses?.parliamentaryQuotaExpense == null &&
+    star: 
+      (Math.round(
+        (
+          expenses
+        )
+      *10)/10),
+      /*((expenses?.parliamentaryQuotaExpense == null &&
       expenses?.parliamentaryQuotaBudget == null
         ? 0
         : parseInt(
@@ -60,17 +68,27 @@ export const getCoordinateData = (
                 (expenses.cabinetExpense / expenses.cabinetBudget) * 100
               ).toFixed(2)
             ))) /
-      2,
+              2,*/
   });
   list.push({
     name: "DIS", //Discursos
-    star: speechs?.count == null ? 0 : (speechs.count*100)/800,
+    star: speechs?.count == null ? 0 :
+    (Math.round(
+      (
+        (speechs.count*100)/790
+      )
+    *10)/10),
   });
   list.push({ name: "VOT", star: (deputyCompleteData?.dados.id) ? (deputyExtraDataDictionary[deputyCompleteData.dados.id]?.voting != undefined) ? deputyExtraDataDictionary[deputyCompleteData.dados.id].voting : 0 : 0 }); //Votações
   list.push({
     name: "PRE", //Presenças
     star:
-      attendances?.committee.attendance == null &&
+    (Math.round(
+      (
+        attendances
+      )
+    *10)/10),
+      /*attendances?.committee.attendance == null &&
       attendances?.committee.miss == null &&
       (attendances?.range == null || attendances?.range == 0) &&
       attendances?.plenary.dSAttendance == null &&
@@ -93,17 +111,18 @@ export const getCoordinateData = (
                 attendances.plenary.deliberativedSessions) *
                 100
             )) /
-          2,
+          2,*/
   });
   list.push({
     name: "LEI", //Leis Aprovadas
-    star: parseInt(
+    star: 
+    (Math.round(
       (
         (+(authorships?.total == null ? 0 : authorships.total) +
           +(reports?.total == null ? 0 : reports.total)) /
         (legislatures?.count == null ? 0 : legislatures.count)
-      ).toFixed(2)
-    ),
+      )
+    *10)/10),
   });
   return list;
 };

@@ -12,10 +12,10 @@ export const partyLogoDictionary: { [id: string]: PartyLogoProp } = {
     url: "https://psol50sp.org.br/wp-content/uploads/2019/12/Logo_PSOL-SP-13.png",
     border: false,
   },
-  DEM: {
+  /* DEM: {
     url: "https://logodownload.org/wp-content/uploads/2017/03/dem-democratas-logo-partido-7.png",
     border: true,
-  },
+  }, */
   PSD: {
     url: "http://www.psd-ba.org.br/imagens/psd-logo-manual-04.svg",
     border: false,
@@ -28,10 +28,10 @@ export const partyLogoDictionary: { [id: string]: PartyLogoProp } = {
     url: "https://pt.org.br/wp-content/themes/pt_2016/assets/images/ico-news-pt.png",
     border: false,
   },
-  PSL: {
+  /* PSL: {
     url: "https://seeklogo.com/images/P/psl-17-logo-E611BA820A-seeklogo.com.png",
     border: true,
-  },
+  }, */
   PV: {
     url: "https://pv.org.br/wp-content/uploads/2021/07/logo-vertical-destaque.png",
     border: false,
@@ -102,6 +102,10 @@ export const partyLogoDictionary: { [id: string]: PartyLogoProp } = {
   },
   CIDADANIA: {
     url: "https://cidadania23.org.br/wp-content/uploads/2021/05/logo-retina-primary2-1.png",
+    border: true,
+  },
+  UNIÃO: {
+    url: "https://logospng.org/download/uniao-brasil/uniao-brasil-512.png",
     border: true,
   },
 };

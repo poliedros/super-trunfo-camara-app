@@ -2,7 +2,10 @@ import React from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Image from "react-bootstrap/Image";
+import Card from "react-bootstrap/Card";
 import ListGroup from "react-bootstrap/ListGroup";
+
+import { deputyExtraDataDictionary } from "../../data/deputyExtraDataDictionary";
 
 /*interface PoliticianCard {
   show: false;
@@ -20,9 +23,65 @@ interface PoliticianCardProps {
   //politician: PoliticianCard;
 }
 
-const PoliticianCard = (/*{ politician }: PoliticianCardProps*/) => {
+const PoliticianCard = ({ politician }: any) => {
+  
   return (
-    <div>
+    
+    <div
+        className="cardContainerCenter"
+        onClick={async () => {
+          /*setModalShow(true);
+
+      setIdPolitician(politician.id);
+      setUrlPolitician(politician.uri);
+      setCurrentPolitician(politician.uri, politician.uriPartido);
+      setCurrentPoliticianCareer();
+      setAuthorshipPropositions(politician.id);
+      setPropositionsReport(politician.id);
+      setLegislaturesData(politician.id);
+      setSpeechData(politician.id, 1);
+      setAttendanceData(politician.id);
+      setExpensesData(politician.id, 1);*/
+          //waitForUs(politician); ESSE AQUI NAO ESTAVA COMENTADO
+          //setLoading(0);
+        }}
+      >
+        {/* console.log("DEPUTIES") */}
+        {/* console.log(politician) */}
+        <Image
+          className="cardImage"
+          src={politician.urlFoto + "maior.jpg"}
+          rounded
+        />
+
+        <Card bg="dark" text="white" style={{ width: "18rem" }}>
+          <Card.Body className="cardPadding txtCenter">
+            <Card.Subtitle>
+              Deputad
+              {deputyExtraDataDictionary[politician.id]?.gender !=
+              undefined
+                ? deputyExtraDataDictionary[politician.id].gender
+                  ? "a"
+                  : "o"
+                : "o"}{" "}
+              Federal
+            </Card.Subtitle>
+            <Card.Title>{politician.nome}</Card.Title>
+
+            <Card.Text className="cardTextLeft">
+              Partido:{" "}
+              <span className="cardTextRight">
+                {politician.siglaPartido}
+              </span>
+              <br />
+              UF (estado):{" "}
+              <span className="cardTextRight">
+                {politician.siglaUf}
+              </span>
+            </Card.Text>
+          </Card.Body>
+        </Card>
+              
     {/*<Modal
       {...politician}
       size="lg"
