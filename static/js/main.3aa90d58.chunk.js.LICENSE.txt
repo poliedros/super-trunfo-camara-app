@@ -1,0 +1,1 @@
+/*!= null ? votingMin = 4Number(e.target.value) : null*/
