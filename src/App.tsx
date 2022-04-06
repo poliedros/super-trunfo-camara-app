@@ -44,6 +44,8 @@ import Badge from "react-bootstrap/Badge";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
 
+import Collapse from "react-bootstrap/Collapse";
+
 //import { ContextAwareToggle } from 'react-bootstrap/AccordionButton';
 //import { useAccordionButton } from 'react-bootstrap/AccordionButton';
 //const decoratedOnClick = useAccordionButton(eventKey: any, onClick: KeyboardEvent);
@@ -83,7 +85,9 @@ import TitleSuperTrunfo from "./components/TitleSuperTrunfo/TitleSuperTrunfo";
 import Lottie from 'react-lottie';
 import animationData from './lotties/candidate.json';
 
-import ButtonGroup from 'react-bootstrap/ButtonGroup'
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
+
+//import Collapse from 'react-bootstrap/Collapse';
 
 const cheerio = require("cheerio");
 
@@ -165,6 +169,10 @@ function App() {
   const [state, setState] = useState<string>();
 
   const [ sttVotingMin, setSttVotingMin ] = React.useState(0);
+
+  const [open, setOpen] = useState(false);
+
+  const [open2, setOpen2] = useState(false);
   
   var polygons = [];
 
@@ -1944,7 +1952,7 @@ function App() {
                   </span>
                 </h6>
                 <br />
-                <Row style={{ display: "flex", alignItems: "center" }}>
+                {/* <Row style={{ display: "flex", alignItems: "center" }}>
                   <Col xs={12} md={8}>
                     <h6 className="cardTextLeft wc">
                       Líder
@@ -1961,12 +1969,33 @@ function App() {
                       style={{ borderTopLeftRadius: "2rem", borderTopRightRadius: "0.25rem", borderBottomLeftRadius: "0.25rem", borderBottomRightRadius: "1rem" }}
                     />
                   </Col>
-                </Row>
-                <br/>
+                </Row> 
+                <br/>*/}
                 <Accordion>
                   <Accordion.Item eventKey="0" className="bgTrans wc">
                     <Accordion.Header>Dados Estruturais</Accordion.Header>
-                    <Accordion.Body>{getDeputyList("party")}</Accordion.Body>
+                    <Accordion.Body>
+                      <Row style={{ display: "flex", alignItems: "center" }}>
+                        <Col xs={12} md={8}>
+                          <h6 className="cardTextLeft wc">
+                            Líder
+                            <span className="cardTextRight">
+                              {getDeputyInformation("leader")}
+                            </span>
+                          </h6>
+                        </Col>
+                        <Col xs={12} md={4}>
+                          <Image
+                            width="90px"
+                            src={getDeputyInformation("leaderPhoto")}
+                            thumbnail
+                            style={{ borderTopLeftRadius: "2rem", borderTopRightRadius: "0.25rem", borderBottomLeftRadius: "0.25rem", borderBottomRightRadius: "1rem" }}
+                          />
+                        </Col>
+                      </Row>
+                      <br />
+                      {getDeputyList("party")}
+                    </Accordion.Body>
                   </Accordion.Item>
                 </Accordion>
               </Col>
@@ -4328,11 +4357,13 @@ function App() {
             setShow1(true);//setModalShow2(true);
           }}
           src={
-            icon?.urlSearch ? icon.urlSearch : ''
+            "https://icon-library.com/images/search-icon-png/search-icon-png-15.jpg"
+            /* icon?.urlSearch ? icon.urlSearch : '' */
             //"https://d1b1fjiwh8olf2.cloudfront.net/icon/free/svg/459980.svg?token=eyJhbGciOiJoczI1NiIsImtpZCI6ImRlZmF1bHQifQ__.eyJpc3MiOiJkMWIxZmppd2g4b2xmMi5jbG91ZGZyb250Lm5ldCIsImV4cCI6MTYzNTgxMTIwMCwicSI6bnVsbCwiaWF0IjoxNjM1NjEyODA3fQ__.d52f7b901cc75074197d5fc1f564b79a3202d3bcdfe26f9d463834b6983225ae"
           }
         />
         <br/>
+        
         <h4 style={{ textAlign: "center" }}>
           <Badge pill bg="light" text="dark">
             Parlamentares: { deputiesDataFilter.length }
@@ -4355,6 +4386,13 @@ function App() {
           </Badge>
           <br/>
           <br/>
+          <Button variant="outline-primary" size="sm" onClick={() => setOpen2(!open2)} aria-controls="example-fade-text" aria-expanded={open2}>
+            Mostrar dados adicionais{/* {" "} */}
+            {/* <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-chevron-down" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+            </svg> */}
+          </Button>
+          <br/>
           {/* <Badge bg="warning" text="dark">
             { stateShow.sort().map(s => (
               <>
@@ -4369,27 +4407,50 @@ function App() {
             )) }
           </Badge> */}
           {/* <Badge bg="warning" text="dark"> */}
+            { stateShow.length > 0 || partyShow.length > 0 ? 
+            <Button variant="outline-light" style={{ margin: "1rem" }}
+              onClick={() => setOpen(!open)}
+              aria-controls="example-collapse-text"
+              aria-expanded={open}
+            >
+              Análise da Pesquisa{" "}
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-chevron-down" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+              </svg>
+            </Button>
+            : null }
+            <div style={{ display: "flex", flexWrap: "wrap", margin: "0 7rem 0 7rem", alignItems: "center" }}>
             { stateShow.sort().map(s => (
-              <>
-                <ButtonGroup aria-label="Basic example">
-                  <Button variant="primary" disabled>{s}</Button>
-                  <Button variant="light" disabled>{deputiesData.filter(politician => (s.includes(politician.siglaUf))).length}</Button>
-                  <Button variant="outline-light" disabled>{deputiesDataFilter.filter(politician => (s.includes(politician.siglaUf))).length}</Button>
-                  <Button variant="outline-light" disabled>{(deputiesDataFilter.filter(politician => (s.includes(politician.siglaUf))).length / deputiesData.filter(politician => (s.includes(politician.siglaUf))).length)*100}%</Button>
+              <Collapse in={open}>
+              <Container style={{ textAlign: "left", marginBottom: "1rem", width: "auto" }}>
+                <Card border="light" bg="dark" text="light" style={{ width: "fit-content" }} >
+                  <Card.Body>
+                  
+                <ButtonGroup aria-label="Basic example" style={{ pointerEvents: "none" }}>
+                  <Button variant="primary">{s}</Button>
+                  <Button variant="outline-secondary">{deputiesData.filter(politician => (s.includes(politician.siglaUf))).length}</Button>
+                  <Button variant="light">{deputiesDataFilter.filter(politician => (s.includes(politician.siglaUf))).length}</Button>
+                  <Button variant="outline-light"><b>{ ( Math.round( (deputiesDataFilter.filter(politician =>
+                    (s.includes(politician.siglaUf))).length / deputiesData.filter(politician => (s.includes(politician.siglaUf))).length)*100 *100)/100 ).toString().replace('.',',') }%</b></Button>
                 </ButtonGroup>
                 <br/>
+                <div>
                 {
-                  partyShow.sort().map(p => (deputiesDataFilter.filter(politician => (p.includes(politician.siglaPartido) && s.includes(politician.siglaUf))).length != 0 ?
-                    <ButtonGroup style={{ margin: "10px" }}aria-label="Basic example">
-                      <Button variant="outline-light" disabled>{p}</Button>
-                      <Button variant="light" disabled>{deputiesDataFilter.filter(politician => (p.includes(politician.siglaPartido) && s.includes(politician.siglaUf))).length}</Button>
+                  partyShow.sort().map(p => (deputiesDataFilter.filter(politician => (p == politician.siglaPartido && s.includes(politician.siglaUf))).length != 0 ?
+                    <ButtonGroup style={{ margin: "1rem .5rem 0 .5rem", pointerEvents: "none" }} aria-label="Basic example">
+                      <Button variant="outline-light">{p}</Button>
+                      <Button variant="light">{deputiesDataFilter.filter(politician => (p == politician.siglaPartido && s.includes(politician.siglaUf))).length}</Button>
                     </ButtonGroup>
                     : null
                   ))
                 }
-                <br/>
-              </>
+                </div>
+                </Card.Body>
+                </Card>
+              </Container>
+              </Collapse>
             )) }
+            </div>
           {/* </Badge> */}
           
         </h4>
@@ -4451,7 +4512,7 @@ function App() {
                     </Card.Subtitle>
                     <Card.Title>{politician.nome}</Card.Title>
 
-                    <Card.Text className="cardTextLeft">
+                    {/* <Card.Text className="cardTextLeft">
                       Partido:{" "}
                       <span className="cardTextRight">
                         {politician.siglaPartido}
@@ -4461,7 +4522,152 @@ function App() {
                       <span className="cardTextRight">
                         {politician.siglaUf}
                       </span>
+                    </Card.Text> */}
+                    <Card.Text className="cardTextLeft" style={{ marginBottom: "0" }}>
+                      <Row>
+                        <Col>
+                          Sigla{" "}
+                          <span className="cardTextRight">
+                            {politician.siglaPartido}
+                          </span>
+                        </Col>
+                        <Col>
+                          UF{" "}
+                          <span className="cardTextRight">
+                            {politician.siglaUf}
+                          </span>
+                        </Col>
+                      </Row>
                     </Card.Text>
+                    
+                    <Collapse in={open2}>
+                      
+                    <Card.Text className="cardTextLeft">
+                      <Row style={{ textAlign: "center", margin: ".5rem" }}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-chevron-compact-down" viewBox="0 0 16 16">
+                          <path fill-rule="evenodd" d="M1.553 6.776a.5.5 0 0 1 .67-.223L8 9.44l5.776-2.888a.5.5 0 1 1 .448.894l-6 3a.5.5 0 0 1-.448 0l-6-3a.5.5 0 0 1-.223-.67z"/>
+                        </svg>
+                      </Row>
+                      <Row>
+                        <Col>
+                          LEG{" "}
+                          <span className="cardTextRight">
+                          {deputyExtraDataDictionary[politician.id] !=
+                          undefined
+                            ? deputyExtraDataDictionary[politician.id]?.legislature
+                              ? ((deputyExtraDataDictionary[politician.id]?.legislature?.length ?? 0) * 20)
+                              : 0
+                            : 0}
+                          </span>
+                          <br />
+                          DES{" "}
+                          <span className="cardTextRight">
+                          {deputyExtraDataDictionary[politician.id] !=
+                          undefined
+                            ? deputyExtraDataDictionary[politician.id]?.expenses
+                              ? (Math.round(
+                                ((
+                                ((deputyExtraDataDictionary[politician.id]
+                                ? deputyExtraDataDictionary[politician.id].expenses?.cabinetPeriod
+                                ? (100 - ((((deputyExtraDataDictionary[politician.id].expenses?.cabinetExpense ?? 0) / (deputyExtraDataDictionary[politician.id].expenses?.cabinetPeriod ?? 0)) ?? 0) / 111675.59) * 100 ?? 0)
+                                : 0
+                                : 0) +
+                                (deputyExtraDataDictionary[politician.id]
+                                ? deputyExtraDataDictionary[politician.id].expenses?.parliamentaryQuotaPeriod
+                                ? (100 - ((((deputyExtraDataDictionary[politician.id].expenses?.parliamentaryQuotaExpense ?? 0) / (deputyExtraDataDictionary[politician.id].expenses?.parliamentaryQuotaPeriod ?? 0)) ?? 0) / parliamentaryQuotaBudgetDictionary[politician.siglaUf ?? ""].value) * 100 ?? 0)
+                                : 0
+                                : 0)) / 2
+                                ) ?? 0)
+                                *10)/10).toString().replace('.',',')
+                              
+                              : 0
+                            : 0}
+                          </span>
+                          <br />
+                          DIS{" "}
+                          <span className="cardTextRight">
+                          {deputyExtraDataDictionary[politician.id] !=
+                          undefined
+                            ? deputyExtraDataDictionary[politician.id]?.speech
+                              ? (Math.round(
+                                (
+                                  deputyExtraDataDictionary[politician.id]
+                                  ? (deputyExtraDataDictionary[politician.id].speech ?? 0) * 100/790
+                                  : 0
+                                )
+                                *10)/10)
+                                .toString().replace('.',',')
+                              : 0
+                            : 0}
+                          </span>
+                        </Col>
+                        <Col>
+                          VOT{" "}
+                          <span className="cardTextRight">
+                          {deputyExtraDataDictionary[politician.id] !=
+                          undefined
+                            ? deputyExtraDataDictionary[politician.id]?.voting
+                              ? deputyExtraDataDictionary[politician.id]?.voting
+                              : 0
+                            : 0}
+                          </span>
+                          <br />
+                          PRE{" "}
+                          <span className="cardTextRight">
+                          {deputyExtraDataDictionary[politician.id] !=
+                          undefined
+                            ? deputyExtraDataDictionary[politician.id]?.presences
+                              ? (Math.round(
+                                (
+                              (
+                                (deputyExtraDataDictionary[politician.id]
+                                ? ((deputyExtraDataDictionary[politician.id].presences?.commissionPresence ?? 0) +
+                                (deputyExtraDataDictionary[politician.id].presences?.commissionJustified ?? 0)) != 0 &&
+                                ((deputyExtraDataDictionary[politician.id].presences?.commissionPresence ?? 0) +
+                                (deputyExtraDataDictionary[politician.id].presences?.commissionJustified ?? 0) +
+                                (deputyExtraDataDictionary[politician.id].presences?.commissionMiss ?? 0)) != 0
+                                  ? Math.round((
+                                    ((deputyExtraDataDictionary[politician.id].presences?.commissionPresence ?? 0) +
+                                    (deputyExtraDataDictionary[politician.id].presences?.commissionJustified ?? 0))/
+                                    ((deputyExtraDataDictionary[politician.id].presences?.commissionPresence ?? 0) +
+                                    (deputyExtraDataDictionary[politician.id].presences?.commissionJustified ?? 0) +
+                                    (deputyExtraDataDictionary[politician.id].presences?.commissionMiss ?? 0))
+                                  ) * 100)
+                                  : 0
+                                : 0)
+                                +
+                                (deputyExtraDataDictionary[politician.id]
+                                ? ((deputyExtraDataDictionary[politician.id].presences?.plenaryPresence ?? 0) +
+                                (deputyExtraDataDictionary[politician.id].presences?.plenaryJustified ?? 0)) != 0 &&
+                                ((deputyExtraDataDictionary[politician.id].presences?.plenaryPresence ?? 0) +
+                                (deputyExtraDataDictionary[politician.id].presences?.plenaryJustified ?? 0) +
+                                (deputyExtraDataDictionary[politician.id].presences?.plenaryMiss ?? 0)) != 0
+                                  ? Math.round((
+                                    ((deputyExtraDataDictionary[politician.id].presences?.plenaryPresence ?? 0) +
+                                    (deputyExtraDataDictionary[politician.id].presences?.plenaryJustified ?? 0))/
+                                    ((deputyExtraDataDictionary[politician.id].presences?.plenaryPresence ?? 0) +
+                                    (deputyExtraDataDictionary[politician.id].presences?.plenaryJustified ?? 0) +
+                                    (deputyExtraDataDictionary[politician.id].presences?.plenaryMiss ?? 0))
+                                  ) * 100)
+                                  : 0
+                                : 0)
+                              )/2
+                              )
+                              *10)/10)
+                              .toString().replace('.',',')
+                              : 0
+                            : 0}
+                          </span>
+                          <br />
+                          LEI{" "}
+                          <span className="cardTextRight">
+                            ??
+                          </span>
+                        </Col>
+                      </Row>
+                      
+                    </Card.Text>
+                    </Collapse>
                   </Card.Body>
                 </Card>
               </div>

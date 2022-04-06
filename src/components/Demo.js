@@ -81,7 +81,7 @@ export default class Demo extends Component {
             { Object.keys(partyLogoDictionary).sort().map((elements) => (
               (elements != "PATRI") ?
               <Col xs={6} md={4}>
-                <Button value={ elements } size="sm" style={{ marginBottom: "3px", fontSize: ".7rem" }} onClick={ e => { /* this.state.selectedOption.push(e.currentTarget.value.toString()); */ this.onValueChange(e.currentTarget.value.toString()); /* console.log("value: " + party1 + " " + this.state.selectedOption + " " + party1.includes(e.currentTarget.value.toString())); */ /* this.props.onClick(this.state.selectedOption) */ } }>{ elements }</Button>
+                <Button value={ elements } size="sm" style={{ marginBottom: "3px", fontSize: ".7rem" }} onClick={ e => { /* this.state.selectedOption.push(e.currentTarget.value.toString()); */ e.currentTarget.style.backgroundColor == "gray" ? e.currentTarget.style.backgroundColor = "#0d6efd" : e.currentTarget.style.backgroundColor = "gray"; this.onValueChange(e.currentTarget.value.toString()); /* console.log("value: " + party1 + " " + this.state.selectedOption + " " + party1.includes(e.currentTarget.value.toString())); */ /* this.props.onClick(this.state.selectedOption) */ } }>{ elements }</Button>
               </Col>
               : null  
             )) }
